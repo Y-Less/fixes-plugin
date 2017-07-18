@@ -1,17 +1,43 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
+    <Filter Include="source">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    <Filter Include="dependencies">
+      <UniqueIdentifier>{11a0cfbe-7780-4337-a5f6-238962440606}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files">
+    <Filter Include="resources">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="dependencies\subhook">
+      <UniqueIdentifier>{37e62a9c-9e62-4a9d-bdcc-0a275d31e31a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dependencies\samp-log-core">
+      <UniqueIdentifier>{212e1dba-1521-4a9a-b00b-5e083ae3bf3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dependencies\samp-plugin-sdk">
+      <UniqueIdentifier>{71791183-2bf1-4aee-8848-92ff8ede39a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dependencies\sampgdk">
+      <UniqueIdentifier>{10e2e23b-2369-481c-ac6c-cc248c6be42f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="dependencies\subhook\subhook.c">
+      <Filter>dependencies\subhook</Filter>
+    </ClCompile>
+    <ClCompile Include="dependencies\samp-plugin-sdk\amxplugin.cpp">
+      <Filter>dependencies\samp-plugin-sdk</Filter>
+    </ClCompile>
+    <ClCompile Include="dependencies\samp-plugin-sdk\amxplugin2.cpp">
+      <Filter>dependencies\samp-plugin-sdk</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="plugin.def" />
   </ItemGroup>
 </Project>
