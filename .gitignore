@@ -259,3 +259,15 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+/Preprocess/amxplugin.i
+/Preprocess/amxplugin2.i
+/Preprocess/fixes.tlog/CL.command.1.tlog
+/Preprocess/fixes.tlog/CL.write.1.tlog
+/Preprocess/fixes.tlog/fixes.lastbuildstate
+/Preprocess/fixes.tlog/link.command.1.tlog
+/Preprocess/fixes.tlog/link.read.1.tlog
+/Preprocess/fixes.tlog/link.write.1.tlog
+/Preprocess/fixes.tlog/unsuccessfulbuild
+/Preprocess/main.i
+/Preprocess/subhook.i
+/example.cpp
