@@ -3,7 +3,7 @@
 	url = git@github.com:Zeex/sampgdk.git
 [submodule "dependencies/samp-log-core"]
 	path = dependencies/samp-log-core
-	url = git@github.com:maddinat0r/samp-log-core.git
+	url = git@github.com:Y-Less/samp-log-core.git
 [submodule "dependencies/samp-plugin-sdk"]
 	path = dependencies/samp-plugin-sdk
 	url = git@github.com:Y-Less/samp-plugin-sdk.git
