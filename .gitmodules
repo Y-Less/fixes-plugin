@@ -1,8 +1,8 @@
 [submodule "dependencies/optional-artifact-submodules/sampgdk"]
 	path = dependencies/optional-artifact-submodules/sampgdk
 	url = git@github.com:Zeex/sampgdk.git
-[submodule "dependencies/optional-artifact-submodules/samp-log-core"]
-	path = dependencies/optional-artifact-submodules/samp-log-core
+[submodule "dependencies/samp-log-core"]
+	path = dependencies/samp-log-core
 	url = git@github.com:maddinat0r/samp-log-core.git
 [submodule "dependencies/samp-plugin-sdk"]
 	path = dependencies/samp-plugin-sdk
