@@ -5,64 +5,11 @@
 #include <sampgdk/core.h>
 #include <sampgdk/sdk.h>
 
-#include "main.h"
-
-struct fix_description_s
-{
-public:
-	char const * const Problem;
-	char const * const Solution;
-	char const * const See;
-	char const * const Author;
-	char const * const Topic;
-	char const * const FixedIn;
-
-	constexpr fix_description_s() : fix_description_s(0, 0, 0, 0, 0, 0) {}
-	constexpr fix_description_s(
-		char const * const problem,
-		char const * const solution,
-		char const * const see,
-		char const * const author,
-		char const * const topic,
-		char const * const fixedIn)
-	:
-		Problem(problem), Solution(solution), See(see), Author(author), Topic(topic), FixedIn(fixedIn) {}
-	constexpr fix_description_s problem(char const * const problem) { return { problem, Solution, See, Author, Topic, FixedIn }; }
-	constexpr fix_description_s solution(char const * const solution) { return { Problem, solution, See, Author, Topic, FixedIn }; }
-	constexpr fix_description_s see(char const * const see) { return { Problem, Solution, see, Author, Topic, FixedIn }; }
-	constexpr fix_description_s author(char const * const author) { return { Problem, Solution, See, author, Topic, FixedIn }; }
-	constexpr fix_description_s topic(char const * const topic) { return { Problem, Solution, See, Author, topic, FixedIn }; }
-	constexpr fix_description_s fixed_in(char const * const fixedIn) { return { Problem, Solution, See, Author, Topic, fixedIn }; }
-};
-
-template <int T>
-class DeclaredFix
-{
-public:
-	DeclaredFix(struct fix_description_s const description) {}
-};
-
-#define FIXES_IF__FIXES_DEFINED_ FIXES_NIL_,1
-#define FIXES_IF_0_FIXES_DEFINED_ FIXES_NIL_,0
-#define FIXES_IF_1_FIXES_DEFINED_ FIXES_NIL_,1
-
-#define FIXES_CHECK_DEFINED_(a) FIXES_CHECK_DEFINED_2_(a)
-#define FIXES_CHECK_DEFINED_2_(a) FIXES_CHECK_DEFINED_3_((FIXES_IF_##a##_FIXES_DEFINED_,2))
-
-#define FIXES_CHECK_DEFINED_3_(a) FIXES_CHECK_DEFINED_4_ a
-#define FIXES_CHECK_DEFINED_4_(ignore,result,...) result
-
-#define FIXES_REMOVE_BRACKETS_(...) __VA_ARGS__
-
+// Put the variables in this file's namespace.
 #define DEFINE_FIX(name,comments) \
-	DeclaredFix<FIXES_CHECK_DEFINED_(name)> FIX_##name##_(fix_description_s {} comments )
+	DeclaredFix<FIXES_CHECK_DEFINED_(name)> const FIX_##name##_(fix_description_s {} comments )
 
-DEFINE_FIX(GetPlayerColor,
-	.problem ("Returns \"0\" if \"SetPlayerColor\" has never been called.")
-	.solution("Call \"SetPlayerColor\" in \"OnPlayerConnect\".")
-	.see     ("\"OnPlayerConnect\".")
-	.author  ("\"KoczkaHUN\"")
-);
+#include "main.h"
 
 extern void *pAMXFunctions;
 logprintf_t logprintf;
@@ -78,7 +25,7 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void **ppData) {
 	logprintf = (logprintf_t)ppData[PLUGIN_DATA_LOGPRINTF];
 	samplog::Init();
 	Log.SetLogLevel(LogLevel::DEBUG | LogLevel::ERROR | LogLevel::INFO | LogLevel::WARNING);
-	Log("Loaded");
+	Log(FIX(GetPlayerColor) ? "Yes" : "No");
 	return sampgdk::Load(ppData);
 }
 

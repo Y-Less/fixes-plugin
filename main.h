@@ -16,3 +16,6 @@ extern logprintf_t logprintf;
 
 #endif
 
+// Include all the `extern` declarations for the fix information.
+#include "src/descriptions.h"
+
