@@ -1,7 +1,7 @@
-#include <sampgdk/a_objects.h>
-#include <sampgdk/a_players.h>
-#include <sampgdk/a_samp.h>
-#include <sampgdk/a_vehicles.h>
+//#include <sampgdk/a_objects.h>
+//#include <sampgdk/a_players.h>
+//#include <sampgdk/a_samp.h>
+//#include <sampgdk/a_vehicles.h>
 #include <sampgdk/core.h>
 #include <sampgdk/sdk.h>
 
@@ -9,12 +9,32 @@
 #define DEFINE_FIX(name,comments) \
 	DeclaredFix<FIXES_CHECK_DEFINED_(name)> const FIX_##name##_(fix_description_s {} comments )
 
+#define HOOK_NATIVE(func,type) \
+	class hooked_##func##_ : public NativeHook<type>                           \
+	{                                                                          \
+	public:                                                                    \
+		hooked_##func##_() : NativeHook<type>(#func, &sampgdk_##func) {}       \
+                                                                               \
+	private:                                                                   \
+		static cell Do(AMX * amx, cell * params);                              \
+                                                                               \
+		static subhook::Hook                                                   \
+			hook_;                                                             \
+	}                                                                          \
+	hooked_##func;                                                             \
+	subhook::Hook hooked_##func_::hook_
+
 #include "main.h"
 
-extern void *pAMXFunctions;
-logprintf_t logprintf;
+extern void *
+	pAMXFunctions;
 
-samplog::CPluginLogger Log("fixes-plugin");
+logprintf_t
+	logprintf;
+
+//samplog::CDefaultLevelLogger<LogLevel::INFO>
+samplog::CPluginLogger
+	Log("fixes-plugin");
 
 PLUGIN_EXPORT unsigned int PLUGIN_CALL Supports() {
 	return sampgdk::Supports() | SUPPORTS_AMX_NATIVES | SUPPORTS_PROCESS_TICK;
@@ -25,7 +45,6 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void **ppData) {
 	logprintf = (logprintf_t)ppData[PLUGIN_DATA_LOGPRINTF];
 	samplog::Init();
 	Log.SetLogLevel(LogLevel::DEBUG | LogLevel::ERROR | LogLevel::INFO | LogLevel::WARNING);
-	Log(FIX(GetPlayerColor) ? "Yes" : "No");
 	return sampgdk::Load(ppData);
 }
 

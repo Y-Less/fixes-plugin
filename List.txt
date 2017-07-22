@@ -1,0 +1,716 @@
+/**
+ * \brief      GetPlayerColor
+ * \bug        Returns "0" if "SetPlayerColor" has never been called.
+ * \details    Call "SetPlayerColor" in "OnPlayerConnect".
+ * \author     KoczkaHUN
+ */
+/**
+ * \brief      FILTERSCRIPT
+ * \bug        Despite the fact that is in every new script, many people don't
+ *             define "FILTERSCRIPT" where appropriate.
+ * \details    Provide an "IS_FILTERSCRIPT" variable (note the naming to match
+ *             the original macro).
+ * \author     Y_Less (https://github.com/Y-Less/)
+ */
+/**
+ * \brief      SpawnPlayer
+ * \bug        Kills the player if they are in a vehicle.
+ * \details    Remove the from the vehicle.
+ * \author     Y_Less (https://github.com/Y-Less/)
+ */
+/**
+ * \brief      SetPlayerName
+ * \bug        Using "SetPlayerName" when the new name only differs from the old
+ *             name in case does not alter the name at all.
+ * \details    Change their name twice - once to "_FIXES TEMP NAME" and then to
+ *             the actual required name.
+ * \author     Y_Less (https://github.com/Y-Less/)
+ * \author     Slice (https://github.com/oscar-broman/)
+ * \author     simonepri (https://github.com/simonepri/)
+ */
+/**
+ * \brief      GetPlayerSkin
+ * \bug        Returns the new skin after "SetSpawnInfo" is called but before
+ *             the player actually respawns to get the new skin.
+ * \details    Record the skin in "OnPlayerSpawn" and always return that one.
+ * \author     Y_Less (https://github.com/Y-Less/)
+ */
+/**
+ * \brief      GetWeaponName
+ * \bug        Returns nothing for 18, 44, and 45.
+ * \details    Return the correct names ("Molotov Cocktail", "Thermal Goggles",
+ *             and "Night vision Goggles").
+ * \author     Y_Less (https://github.com/Y-Less/)
+ * \deprecated 0.3.7
+ */
+/**
+ * \brief      SetPlayerWorldBounds
+ * \bug        Aiming can bypass the edge.
+ * \details    Check for the player leaving the area and reset them to their
+ *             last good position if they leave the area (aiming or not).
+ * \author     Y_Less (https://github.com/Y-Less/)
+ */
+/**
+ * \brief      TogglePlayerControllable
+ * \bug        Other players see you moving on the spot.
+ * \details    Return 0 in OnPlayerUpdate.
+ * \author     Slice (https://github.com/oscar-broman/)
+ * \see        http://forum.sa-mp.com/showpost.php?p=876854
+ */
+/**
+ * \brief      HydraSniper
+ * \bug        Entering military aircraft with a sniper rifle messes up views.
+ * \details    Set their armed weapon to fists.
+ *             "FIXES_SetPlayerArmedWeapon".
+ * \author     funky1234
+ * \see        http://forum.sa-mp.com/showpost.php?p=965644
+ */
+/**
+ * \brief      IsPlayerInCheckpoint
+ * \bug        Function returns an undefined value if it is called before any
+ *             other checkpoint functions are called to initialise the value.
+ * \details    Call "DisablePlayerCheckpoint" when they connect.
+ * \author     Y_Less (https://github.com/Y-Less/)
+ */
+/**
+ * \brief      IsPlayerInRaceCheckpoint
+ * \bug        Function returns an undefined value if it is called before any
+ *             other race checkpoint functions are called to initialise the
+ *             value.
+ * \details    Call "DisablePlayerRaceCheckpoint" when they connect.
+ * \author     Y_Less (https://github.com/Y-Less/)
+ */
+/**
+ * \brief      GetPlayerWeapon
+ * \bug        Returns the old value after entering in a vehicle.
+ * \details    If "SetPlayerArmedWeapon" and other similar functions is called
+ *             in a vehicle, store the new value and return that instead.
+ * \author     Y_Less (https://github.com/Y-Less/)
+ * \author     ronixtey (https://github.com/ronixtey/)
+ */
+/**
+ * \brief      PutPlayerInVehicle
+ * \bug        If this is used on a passenger the driver of their old vehicle
+ *             doesn't see them in their new vehicle.
+ * \details    Remove them from the vehicle first.
+ * \author     leong124
+ * \author     Y_Less (https://github.com/Y-Less/)
+ * \see        http://forum.sa-mp.com/showpost.php?p=1265965
+ */
+/**
+ * \brief      KEY_AIM
+ * \bug        "KEY_AIM" isn't defined by default.
+ * \details    Define it.
+ * \author     Y_Less (https://github.com/Y-Less/)
+ */
+/**
+ * \brief      SetPlayerCheckpoint
+ * \bug        If a checkpoint is already set it will use the size of that
+ *             checkpoint instead of the new one.
+ * \details    Call "DisablePlayerCheckpoint" before setting the checkpoint.
+ * \author     ziggi (https://github.com/ziggi/)
+ */
+/**
+ * \brief      SetPlayerRaceCheckpoint
+ * \bug        If a checkpoint is already set it will use the size of that
+ *             checkpoint instead of the new one.
+ * \details    Call "DisablePlayerRaceCheckpoint" before setting the checkpoint.
+ * \author     ziggi (https://github.com/ziggi/)
+ */
+/**
+ * \brief      TextDrawCreate
+ * \bug        Crashes on a blank string.
+ * \details    Intercept blank strings.
+ * \author     wups
+ */
+/**
+ * \brief      TextDrawSetString
+ * \bug        Crashes on a blank string and size greater than 1024.
+ * \details    Intercept blank strings and truncate long strings.
+ * \author     TomTrox
+ */
+/**
+ * \brief      CreatePlayerTextDraw
+ * \bug        Crashes on a blank string.
+ * \details    Intercept blank strings.
+ * \author     wups
+ * \author     Y_Less (https://github.com/Y-Less/)
+ */
+/**
+ * \brief      PlayerTextDrawSetString
+ * \bug        Crashes on a blank string and size greater than 1024.
+ * \details    Intercept blank strings and truncate long strings.
+ * \author     TomTrox
+ * \author     Y_Less (https://github.com/Y-Less/)
+ */
+/**
+ * \brief      AllowInteriorWeapons
+ * \bug        Does nothing.
+ * \details    Set the player's weapon to fists in an interior.
+ *             "OnPlayerUpdate".
+ * \author     KoczkaHUN
+ */
+/**
+ * \brief      OnPlayerEnterVehicle
+ * \bug        Crashes other players when people enter an invalid seat.
+ * \details    Desync the people with invalid seats.
+ * \author     RyDeR`
+ * \author     Y_Less (https://github.com/Y-Less/)
+ * \see        http://forum.sa-mp.com/showpost.php?p=1410296
+ */
+/**
+ * \brief      OnPlayerEnterVehicle_2
+ * \bug        Crashes the server when hacks enter an invalid vehicle.
+ * \details    Desync the people with invalid vehicles.
+ * \author     im
+ * \author     Y_Less (https://github.com/Y-Less/)
+ */
+/**
+ * \brief      AllowTeleport
+ * \bug        0.3dRC9 removed "AllowPlayerTeleport" and "AllowAdminTeleport" in
+ *             favour of "OnPlayerClickMap".  Some scripts used the old code.
+ * \details    Teleport the player in "OnPlayerClickMap".
+ *             "FIXES_AllowAdminTeleport".
+ * \author     Y_Less (https://github.com/Y-Less/)
+ */
+/**
+ * \brief      SetPlayerSpecialAction
+ * \bug        Removing jetpacks from players by setting their special action to
+ *             0 causes the sound to stay until death.
+ * \details    Call "ClearAnimations" before "SetPlayerSpecialAction".
+ * \author     MP2
+ */
+/**
+ * \brief      OnDialogResponse
+ * \bug        Cheaters can spoof the dialogid they are using to respond to ones
+ *             they can't actually see.
+ * \details    Store the displayed dialogid and use that instead.
+ * \author     Y_Less (https://github.com/Y-Less/)
+ * \deprecated 0.3e RC6
+ */
+/**
+ * \brief      GetPlayerDialog
+ * \bug        This function doesn't exist.  Fixed for hidden dialogs.
+ * \details    Add it.  DEFAULTS TO FALSE!
+ * \author     Y_Less (https://github.com/Y-Less/)
+ * \author     simonepri (https://github.com/simonepri/)
+ */
+/**
+ * \brief      PlayerDialogResponse
+ * \bug        A player's dialog doesn't hide when the gamemode restarts,
+ *             causing the server to print "Warning: PlayerDialogResponse
+ *             PlayerId: 0 dialog ID doesn't match last sent dialog ID".
+ * \details    Hide it.
+ * \author     simonepri (https://github.com/simonepri/)
+ */
+/**
+ * \brief      SetSpawnInfo
+ * \bug        Kicks the player if "SpawnPlayer" is called before
+ *             "SetSpawnInfo".
+ * \details    Call "SetSpawnInfo" at least once.
+ * \author     Y_Less (https://github.com/Y-Less/)
+ */
+/**
+ * \brief      SetPlayerSkin
+ * \bug        Breaks sitting on bikes.
+ * \details    Put them back in the vehicle after setting their skin.
+ * \author     CyNiC
+ * \see        http://forum.sa-mp.com/showpost.php?p=1756094
+ */
+/**
+ * \brief      HideMenuForPlayer
+ * \bug        Crashes when passed an invalid menu ID.
+ * \details    Don't hide it when passed an invalid menu.
+ * \author     Y_Less (https://github.com/Y-Less/)
+ * \see        http://forum.sa-mp.com/showpost.php?p=1787297
+ */
+/**
+ * \brief      valstr
+ * \bug        Crashes on large numbers.
+ * \details    Use "format" instead.
+ * \author     Slice (https://github.com/oscar-broman/)
+ */
+/**
+ * \brief      fclose
+ * \bug        Crashes on an invalid handle.
+ * \details    Check for an invalid handle.
+ * \author     Slice (https://github.com/oscar-broman/)
+ */
+/**
+ * \brief      fwrite
+ * \bug        Crashes on an invalid handle.
+ * \details    Check for an invalid handle.
+ * \author     Slice (https://github.com/oscar-broman/)
+ */
+/**
+ * \brief      fread
+ * \bug        Crashes on an invalid handle.
+ * \details    Check for an invalid handle.
+ * \author     Slice (https://github.com/oscar-broman/)
+ */
+/**
+ * \brief      fputchar
+ * \bug        Crashes on an invalid handle.
+ * \details    Check for an invalid handle.
+ * \author     Slice (https://github.com/oscar-broman/)
+ */
+/**
+ * \brief      fgetchar
+ * \bug        Crashes on an invalid handle.
+ * \details    Check for an invalid handle.
+ * \author     Slice (https://github.com/oscar-broman/)
+ */
+/**
+ * \brief      fblockwrite
+ * \bug        Crashes on an invalid handle.
+ * \details    Check for an invalid handle.
+ * \author     Slice (https://github.com/oscar-broman/)
+ */
+/**
+ * \brief      fblockread
+ * \bug        Crashes on an invalid handle.
+ * \details    Check for an invalid handle.
+ * \author     Slice (https://github.com/oscar-broman/)
+ */
+/**
+ * \brief      fseek
+ * \bug        Crashes on an invalid handle.
+ * \details    Check for an invalid handle.
+ * \author     Slice (https://github.com/oscar-broman/)
+ */
+/**
+ * \brief      flength
+ * \bug        Crashes on an invalid handle.
+ * \details    Check for an invalid handle.
+ * \author     Slice (https://github.com/oscar-broman/)
+ */
+/**
+ * \brief      file_inc
+ * \bug        Includes or excludes all the file function fixes together (can
+ *             cause major overhead).
+ * \details    Optionally group them all under one define.  DEFAULTS TO FALSE!
+ * \author     Y_Less (https://github.com/Y-Less/)
+ */
+/**
+ * \brief      SetPlayerAttachedObject
+ * \bug        Doesn't remove objects when the mode ends.
+ * \details    Remove them.
+ * \author     Y_Less (https://github.com/Y-Less/)
+ */
+/**
+ * \brief      OnPlayerDeath
+ * \bug        Clients get stuck when they die with an animation applied.
+ * \details    Clear their animations.
+ * \author     h02
+ * \see        http://forum.sa-mp.com/showpost.php?p=1641144
+ */
+/**
+ * \brief      strins
+ * \bug        Ignores the "maxlength" parameter causing possible crashes.
+ * \details    Manually check the length.
+ * \author     Slice (https://github.com/oscar-broman/)
+ * \author     Y_Less (https://github.com/Y-Less)
+ */
+/**
+ * \brief      IsPlayerConnected
+ * \bug        Only uses the lower two bytes of a passed ID.
+ * \details    Mask the numbers.
+ * \author     Slice (https://github.com/oscar-broman/)
+ */
+/**
+ * \brief      TrainExit
+ * \bug        When getting out of a train entered by "PutPlayerInVehicle", the
+ *             camera does not reset properly.
+ * \details    Reset the camera.
+ * \author     Terminator3
+ * \author     Y_Less (https://github.com/Y-Less/)
+ */
+/**
+ * \brief      Kick
+ * \bug        Calling "Kick" in "OnPlayerConnect" doesn't work properly.
+ * \details    Defer it.
+ * \author     Y_Less (https://github.com/Y-Less/)
+ * \see        http://forum.sa-mp.com/showpost.php?p=1989453
+ * \deprecated 0.3x
+ */
+/**
+ * \brief      OnVehicleMod
+ * \bug        Crashes other players when invalid mods are applied.
+ * \details    Desync the player.
+ * \author     JernejL (https://github.com/JernejL/)
+ * \author     Y_Less (https://github.com/Y-Less/)
+ * \see        http://forum.sa-mp.com/showpost.php?p=1671500
+ */
+/**
+ * \brief      random
+ * \bug        Doesn't work with negative numbers.
+ * \details    Invert then reinvert.  DEFAULTS TO FALSE!
+ * \author     simonepri (https://github.com/simonepri/)
+ */
+/**
+ * \brief      sleep
+ * \bug        Leaks bytes from the stack.
+ * \details    Call a function to store the correct value.
+ * \author     Y_Less (https://github.com/Y-Less/)
+ */
+/**
+ * \brief      AddMenuItem
+ * \bug        Crashes when passed an invalid menu ID.
+ * \details    Don't hide it when passed an invalid menu.
+ * \author     Y_Less (https://github.com/Y-Less/)
+ */
+/**
+ * \brief      SetMenuColumnHeader
+ * \bug        Crashes when passed an invalid menu ID.
+ * \details    Don't hide it when passed an invalid menu.
+ * \author     Y_Less (https://github.com/Y-Less/)
+ */
+/**
+ * \brief      ShowMenuForPlayer
+ * \bug        Crashes when passed an invalid menu ID.
+ * \details    Don't hide it when passed an invalid menu.
+ * \author     Y_Less (https://github.com/Y-Less/)
+ */
+/**
+ * \brief      HideMenuForPlayer
+ * \bug        Crashes when passed an invalid menu ID.
+ * \details    Don't hide it when passed an invalid menu.
+ * \author     Y_Less (https://github.com/Y-Less/)
+ * \see        http://forum.sa-mp.com/showpost.php?p=1787297
+ */
+/**
+ * \brief      HideMenuForPlayer_2
+ * \bug        Ignores the "menuid" parameter.
+ * \details    Only hide the correct menu.  DEFAULTS TO FALSE!
+ * \author     Y_Less (https://github.com/Y-Less/)
+ */
+/**
+ * \brief      DisableMenu
+ * \bug        Crashes when passed an invalid menu ID.
+ * \details    Don't hide it when passed an invalid menu.
+ * \author     Y_Less (https://github.com/Y-Less/)
+ */
+/**
+ * \brief      DisableMenuRow
+ * \bug        Crashes when passed an invalid menu ID.
+ * \details    Don't hide it when passed an invalid menu.
+ * \author     Y_Less (https://github.com/Y-Less/)
+ */
+/**
+ * \brief      Menus
+ * \bug        All menu function fixes are included separately for major
+ *             overhead.
+ * \details    Optionally group them all under one define.
+ * \author     Y_Less (https://github.com/Y-Less/)
+ */
+/**
+ * \brief      GetPlayerMenu
+ * \bug        Returns previous menu when none is displayed.
+ * \details    Return the correct value.
+ * \author     Y_Less (https://github.com/Y-Less/)
+ */
+/**
+ * \brief      GetPlayerInterior
+ * \bug        Always returns 0 for NPCs.
+ * \details    Return the correct value.
+ * \author     Y_Less (https://github.com/Y-Less/)
+ * \author     simonepri (https://github.com/simonepri/)
+ */
+/**
+ * \brief      ClearAnimations
+ * \bug        Use ClearAnimation while you are in a vehicle cause the player
+ *             exit from it.
+ * \details    Apply an animation instead of clear animation.
+ * \author     simonepri (https://github.com/simonepri/)
+ */
+/**
+ * \brief      ClearAnimations_2
+ * \bug        ClearAnimations doesn't do anything when the animation ends if we
+ *             pass 1 for the freeze parameter in ApplyAnimation.
+ * \details    Apply an idle animation for stop and then use ClearAnimation.
+ * \author     simonepri (https://github.com/simonepri/)
+ */
+/**
+ * \brief      DriveBy
+ * \bug        If you press KEY_CROUCH while you're passenger and if you are
+ *             armed, the player start to aim; if you repress KEY_CROUCH the
+ *             player don't return in vehicle.
+ * \details    Apply the animation to return the player in the vehicle.
+ * \author     simonepri (https://github.com/simonepri/)
+ */
+/**
+ * \brief      GangZoneCreate
+ * \bug        Gang zones bug on the main map for players at certain angles
+ *             relative to them.
+ * \details    Set a non floating value for the gang zone co-ordinate.
+ * \author     simonepri (https://github.com/simonepri/)
+ * \author     Y_Less (https://github.com/Y-Less/)
+ */
+/**
+ * \brief      SPECIAL_ACTION_PISSING
+ * \bug        "SPECIAL_ACTION_PISSING" isn't defined by default.
+ * \details    Define it.
+ * \author     simonepri (https://github.com/simonepri/)
+ */
+/**
+ * \brief      IsValidVehicle
+ * \bug        "IsValidVehicle" isn't defined by default.
+ * \details    Define it.
+ * \author     simonepri (https://github.com/simonepri/)
+ */
+/**
+ * \brief      ApplyAnimation
+ * \bug        Passing an invalid animation library in ApplyAnimation causes a
+ *             client crash for streamed in players.
+ * \details    Block ApplyAnimation when an invalid library is passed.
+ * \author     simonepri (https://github.com/simonepri/)
+ */
+/**
+ * \brief      ApplyAnimation_2
+ * \bug        First time a library is used, it does nothing.
+ * \details    Apply animations twice when first using a library.
+ * \author     simonepri (https://github.com/simonepri/)
+ * \author     Lordzy (https://github.com/Lordzy/)
+ * \author     Y_Less (https://github.com/Y-Less/)
+ */
+/**
+ * \brief      ApplyActorAnimation
+ * \bug        Passing an invalid animation library in ApplyAnimation causes a
+ *             client crash for streamed in players.
+ * \details    Block ApplyActorAnimation when an invalid library is passed.
+ * \author     simonepri (https://github.com/simonepri/)
+ * \author     ziggi (https://github.com/ziggi/)
+ */
+/**
+ * \brief      ApplyActorAnimation_2
+ * \bug        First time a library is used, it does nothing.
+ * \details    Apply animations twice when first using a library.
+ * \author     simonepri (https://github.com/simonepri/)
+ * \author     Lordzy (https://github.com/Lordzy/)
+ * \author     Y_Less (https://github.com/Y-Less/)
+ * \author     ziggi (https://github.com/ziggi/)
+ */
+/**
+ * \brief      OnPlayerSpawn
+ * \bug        San Andreas deducts $100 from players.
+ * \details    Give them it back.
+ * \author     Y_Less (https://github.com/Y-Less/)
+ */
+/**
+ * \brief      GetGravity
+ * \bug        "GetGravity" isn't defined by default.
+ * \details    Define it.
+ * \author     Whitetiger (https://github.com/Whitetigerswt)
+ * \see        http://forum.sa-mp.com/showpost.php?p=1706447
+ */
+/**
+ * \brief      gpci
+ * \bug        "gpci" isn't defined by default.
+ * \details    Define it.
+ * \author     simonepri (https://github.com/simonepri/)
+ * \see        http://pastebin.com/VQSGpbSm
+ */
+/**
+ * \brief      Natives
+ * \bug        Several natives are included by default, this enables or disables
+ *             them all.  Therefore this is an umbrella fix for several fixes.
+ * \details    Define them.
+ * \author     Y_Less (https://github.com/Y-Less/)
+ */
+/**
+ * \brief      OnPlayerConnect
+ * \bug        This function isn't called for players when a filterscript
+ *             starts.
+ * \details    Call it for all connected players.
+ * \author     Y_Less (https://github.com/Y-Less/)
+ */
+/**
+ * \brief      OnPlayerDisconnect
+ * \bug        This function isn't called for players when a filterscript ends.
+ * \details    Call it for all connected players.
+ * \author     Y_Less (https://github.com/Y-Less/)
+ */
+/**
+ * \brief      GameText
+ * \bug        Several styles do not display for the time specified.
+ * \details    Recreate the styles in Text Draws and use those instead.
+ * \author     Y_Less (https://github.com/Y-Less/)
+ */
+/**
+ * \brief      GameTextStyles
+ * \bug        San Andreas has fixed styles for area and vehicle names, but they
+ *             are not included in the GameText styles list.
+ * \details    Add them.  DEFAULTS TO FALSE.
+ * \author     Y_Less (https://github.com/Y-Less/)
+ */
+/**
+ * \brief      HideGameText
+ * \bug        There is no "HideGameTextForXYZ" function.
+ * \details    Show a single space for a game text.
+ * \author     Y_Less (https://github.com/Y-Less/)
+ */
+/**
+ * \brief      ClearPlayerWorldBounds
+ * \bug        There is no "ClearPlayerWorldBounds" function.
+ * \details    Put the world bounds back to the default.
+ * \author     Y_Less (https://github.com/Y-Less/)
+ */
+/**
+ * \brief      GetPlayerWorldBounds
+ * \bug        There is no "GetPlayerWorldBounds" function.
+ * \details    Store them and retrieve them.
+ * \author     Y_Less (https://github.com/Y-Less/)
+ */
+/**
+ * \brief      WEAPONS
+ * \bug        Some weapons are not defined by default.
+ * \details    Define it.
+ * \author     ziggi (https://github.com/ziggi)
+ */
+/**
+ * \brief      BODYPARTS
+ * \bug        The bodyparts to be used in OnPlayer(Take/Give)Damage are not
+ *             defined by default
+ * \details    Define it.
+ * \author     Whitetiger (https://github.com/Whitetigerswt)
+ */
+/**
+ * \brief      CAMERAMODES
+ * \bug        The camera modes for GetPlayerCameraMode are not defined by
+ *             default.
+ * \details    Define it.
+ * \author     Whitetiger (https://github.com/Whitetigerswt)
+ * \see        http://forum.sa-mp.com/showpost.php?p=1309730
+ */
+/**
+ * \brief      SetPlayerCamera
+ * \bug        Using the camera functions directly after enabling spectator mode
+ *             doesn't work.
+ * \details    Defer them.
+ *             "FIXES_TogglePlayerSpectating".
+ * \author     Emmet_ (https://github.com/emmet-jones)
+ */
+/**
+ * \brief      SetPlayerTime
+ * \bug        Using this function under "OnPlayerConnect" doesn't work.
+ * \details    Defer it.
+ * \author     Emmet_ (https://github.com/emmet-jones)
+ */
+/**
+ * \brief      OnPlayerRequestClass
+ * \bug        Random blunts and bottles sometimes appear in class selection.
+ * \details    Call "RemoveBuildingForPlayer".
+ * \author     Y_Less (https://github.com/Y-Less/)
+ */
+/**
+ * \brief      SetPlayerColor
+ * \bug        If used under OnPlayerConnect, the affecting player will not
+ *             see the color in the TAB menu.
+ * \details    Defer it.
+ * \author     Emmet_ (https://github.com/emmet-jones)
+ * \see        http://forum.sa-mp.com/showthread.php?t=452407
+ */
+/**
+ * \brief      FileMaths
+ * \bug        You can write gibberish like "File:a; ++a;".
+ * \details    Remove the operators.
+ * \author     Y_Less (https://github.com/Y-Less/)
+ */
+/**
+ * \brief      GetPlayerWeaponData
+ * \bug        Old weapons with no ammo left are still returned.
+ * \details    Set "weapons" to 0.
+ * \author     Y_Less (https://github.com/Y-Less/)
+ * \see        http://forum.sa-mp.com/showthread.php?t=567400
+ */
+/**
+ * \brief      strcmp
+ * \bug        Return 0 if anyone of the string is empty.
+ * \details    Add a check for empty string.
+ * \author     Y_Less (https://github.com/Y-Less)
+ */
+/**
+ * \brief      GetPVarString
+ * \bug        Wrong symbol code for symbols with code 128 and above.
+ * \details    Use logical conjunction on symbol and 0xFF.
+ * \author     ziggi (https://github.com/ziggi)
+ * \author     Mutha_X
+ * \author     Daniel_Cortez (https://github.com/Daniel-Cortez)
+ * \see        http://forum.sa-mp.com/showthread.php?t=572724&page=11
+ * \see        http://pro-pawn.ru/showthread.php?13007
+ */
+/**
+ * \brief      GetSVarString
+ * \bug        Wrong symbol code for symbols with code 128 and above.
+ * \details    Use logical conjunction on symbol and 0xFF.
+ * \author     ziggi (https://github.com/ziggi)
+ * \author     Mutha_X
+ * \author     Daniel_Cortez (https://github.com/Daniel-Cortez)
+ * \see        http://forum.sa-mp.com/showthread.php?t=572724&page=11
+ * \see        http://pro-pawn.ru/showthread.php?13007
+ */
+/**
+ * \brief      toupper
+ * \bug        Not working on Linux for symbols with code 128 and above.
+ * \details    Recreate the function.
+ * \author     ziggi (https://github.com/ziggi)
+ * \see        http://pro-pawn.ru/showthread.php?13466&p=72954#post72954
+ */
+/**
+ * \brief      tolower
+ * \bug        Not working on Linux for symbols with code 128 and above.
+ * \details    Recreate the function.
+ * \author     ziggi (https://github.com/ziggi)
+ * \see        http://pro-pawn.ru/showthread.php?13466&p=72954#post72954
+ */
+/**
+ * \brief      PassengerSeating
+ * \bug        Teleporting player to passenger seat after delay.
+ * \details    Call ClearAnimation after some delay.
+ * \author     ziggi (https://github.com/ziggi)
+ */
+/**
+ * \brief      GogglesSync
+ * \bug        Visual effects show for all players.
+ * \details    return 0 in OnPlayerUpdate after key pressed.
+ * \author     ziggi (https://github.com/ziggi)
+ */
+/**
+ * \brief      GetPlayerPoolSize
+ * \bug        Returns "0" even if there are no players on the server.
+ * \details    Return "-1" if PlayerPoolsize is 0 but Player 0 is not connected.
+ * \author     Bios-Marcel (https://github.com/Bios-Marcel)
+ */
+/**
+ * \brief      SetPlayerPos
+ * \bug        Using this function on skydiving players kills them.
+ * \details    Remove the parachute when the player is skydiving.
+ * \author     Freaksken (https://github.com/WoutProvost)
+ */
+/**
+ * \brief      GetPlayerAmmo
+ * \bug        Returns erroneous values over 32767 and under -32768 due to
+ *             overflow.
+ * \details    Prevent setting or adding ammo above 32767 and setting or
+ *             removing ammo below 0.
+ * \author     Freaksken (https://github.com/WoutProvost)
+ */
+/**
+ * \brief      JIT
+ * \bug        Can't easily determine if the script is JIT compiled.
+ * \details    Provide "IS_JIT" to the script for tests.
+ * \author     Y_Less (https://github.com/Y-Less)
+ */
+/**
+ * \brief      OS
+ * \bug        Can't easily determine what OS the script is running on.
+ * \details    Provide "IS_WINDOWS" and "IS_LINUX" to the script for tests.
+ * \author     Y_Less (https://github.com/Y-Less)
+ */
+/**
+ * \brief      const
+ * \bug        Some SA-MP natives don't use "const" when they could.
+ * \details    Redefine the natives.
+ * \author     Y_Less (https://github.com/Y-Less)
+ */
+
