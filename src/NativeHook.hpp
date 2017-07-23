@@ -1,33 +1,35 @@
 #pragma once
 
+#include <subhook/subhook.h>
+#include <sampgdk/a_samp.h>
+#include <sampgdk/a_players.h>
+#include <sampgdk/a_vehicles.h>
+#include <sampgdk/a_objects.h>
+#include <sampgdk/a_actor.h>
+#include <sampgdk/a_http.h>
+
 class NativeHookBase
 {
 public:
 	void Init()
 	{
 		// If a known native matches the stored name, install the hook.
-		Install(native);
+		Install(NULL);
 	}
 
 protected:
 	NativeHookBase(char const * const name) : name_(name) {}
-
-	template <typename T>
-	inline ScopedHookCall<T> MakeBaseCall(subhook::Hook hook)
-	{
-		return ScopedHookCall(hook);
-	}
+	~NativeHookBase() = default;
 
 	virtual subhook::Hook & GetHook() const = 0;
 	virtual void Install(void * src) = 0;
 
 private:
 	NativeHookBase() = delete;
-	~NativeHookBase() = delete;
 	NativeHookBase(NativeHookBase const &) = delete;
 	NativeHookBase(NativeHookBase const &&) = delete;
-	NativeHookBase const & operator(NativeHookBase const &) const = delete;
-	NativeHookBase const & operator(NativeHookBase const &&) const = delete;
+	NativeHookBase const & operator=(NativeHookBase const &) const = delete;
+	NativeHookBase const & operator=(NativeHookBase const &&) const = delete;
 
 	char const * const
 		name_;
@@ -43,7 +45,7 @@ class NativeHook0 : public NativeHookBase
 public:
 	typedef RET (*native_t)();
 
-	class ScopedCall : private subhook::ScopedHookRemove
+	class ScopedCall
 	{
 	public:
 		inline RET operator()()
@@ -51,21 +53,47 @@ public:
 			return native_();
 		}
 
-		ScopedCall(ScopedCall const &&) = default;
-		ScopedCall const & operator(ScopedCall const &&) const = default;
+		~ScopedCall()
+		{
+			if (removed_)
+				hook_.Install();
+		}
 
-		~ScopedCall() = default;
 	private:
-		ScopedCall(subhook::Hook & hook, native_t native) : ScopedHookRemove(&hook), native_(native) {}
-		
-		ScopedCall const & operator(ScopedCall const &) const = delete;
-		ScopedCall(ScopedCall const &) = delete;
+		ScopedCall(subhook::Hook & hook, native_t native)
+			:
+			hook_(hook),
+			native_(native),
+			removed_(hook.Remove())
+		{
+		}
+
+		ScopedCall(ScopedCall const &) = default;
+		ScopedCall & operator=(ScopedCall const &) = default;
+
+		ScopedCall(ScopedCall && that)
+			:
+			hook_(std::move(that.hook_)),
+			native_(std::move(that.native_)),
+			removed_(std::move(that.removed_))
+		{
+			that.removed_ = false;
+		}
+
+		ScopedCall & operator=(ScopedCall const &&) = delete;
+
 		ScopedCall() = delete;
 
 		friend class NativeHook0<RET>;
 
+		subhook::Hook &
+			hook_;
+
 		native_t const
 			native_;
+
+		bool
+			removed_;
 	};
 
 	inline RET operator()()
@@ -73,15 +101,17 @@ public:
 		return native_();
 	}
 
-	NativeHook0<RET>::ScopedCall operator*()
+	ScopedCall operator*()
 	{
-		NativeHook0<RET>::ScopedCall
+		ScopedCall
 			ret(GetHook(), GetNative());
 		return ret;
 	}
 
 protected:
 	NativeHook0(char const * const name, native_t native) : NativeHookBase(name), native_(native) {}
+	virtual native_t GetNative() const = 0;
+	~NativeHook0() = default;
 
 private:
 	native_t const
@@ -89,12 +119,13 @@ private:
 };
 
 // Template specialisation for void returns, since they can't use "return X()".
+template <>
 class NativeHook0<void> : public NativeHookBase
 {
 public:
 	typedef void (*native_t)();
 
-	class ScopedCall : private subhook::ScopedHookRemove
+	class ScopedCall //: private subhook::ScopedHookRemove
 	{
 	public:
 		inline void operator()()
@@ -102,21 +133,47 @@ public:
 			native_();
 		}
 
-		ScopedCall(ScopedCall const &&) = default;
-		ScopedCall const & operator(ScopedCall const &&) const = default;
+		~ScopedCall()
+		{
+			if (removed_)
+				hook_.Install();
+		}
 
-		~ScopedCall() = default;
 	private:
-		ScopedCall(subhook::Hook & hook, native_t native) : ScopedHookRemove(&hook), native_(native) {}
-		
-		ScopedCall const & operator(ScopedCall const &) const = delete;
-		ScopedCall(ScopedCall const &) = delete;
+		ScopedCall(subhook::Hook & hook, native_t native)
+			:
+			hook_(hook),
+			native_(native),
+			removed_(hook.Remove())
+		{
+		}
+
+		ScopedCall(ScopedCall const &) = default;
+		ScopedCall & operator=(ScopedCall const &) = default;
+
+		ScopedCall(ScopedCall && that)
+			:
+			hook_(std::move(that.hook_)),
+			native_(std::move(that.native_)),
+			removed_(std::move(that.removed_))
+		{
+			that.removed_ = false;
+		}
+
+		ScopedCall & operator=(ScopedCall const &&) = delete;
+
 		ScopedCall() = delete;
 
 		friend class NativeHook0<void>;
 
+		subhook::Hook &
+			hook_;
+
 		native_t const
 			native_;
+
+		bool
+			removed_;
 	};
 
 	inline void operator()()
@@ -124,15 +181,17 @@ public:
 		native_();
 	}
 
-	NativeHook0<void>::ScopedCall operator*()
+	ScopedCall operator*() const
 	{
-		NativeHook0<void>::ScopedCall
+		ScopedCall
 			ret(GetHook(), GetNative());
 		return ret;
 	}
 
 protected:
 	NativeHook0(char const * const name, native_t native) : NativeHookBase(name), native_(native) {}
+	virtual native_t GetNative() const = 0;
+	~NativeHook0() = default;
 
 private:
 	native_t const
@@ -335,19 +394,24 @@ class NativeHook<RET()> : public NativeHook0<RET> { protected: NativeHook(char c
 #undef NATIVE_HOOK_PARAMETERS
 #undef NATIVE_HOOK_CALLING
 
+#if !defined HOOK_NATIVE_DECL
+	#define HOOK_NATIVE_DECL(func) extern CHook_##func::hook_ hooked_##func
+#endif
+
 // The hooks and calls for each class are always static, because otherwise it
 // would make installing hooks MUCH harder - we would need stubs that could
 // handle class pointers.  Doing that would negate needing a different class
 // for every hook type, even when the parameters are the same, but this was is
 // probably not much more generated code, and vastly simpler.
 #define HOOK_NATIVE(func,type) \
-	class hooked_##func##_ : public NativeHook<type>                           \
+	class CHook_##func : public NativeHook<type>                               \
 	{                                                                          \
 	public:                                                                    \
-		hooked_##func##_() : NativeHook<type>(#func, &sampgdk_##func) {}       \
+		CHook_##func() : NativeHook<type>(#func, &sampgdk_##func) {}           \
                                                                                \
 	protected:                                                                 \
 		virtual subhook::Hook & GetHook() const { return hook_; }              \
+		virtual native_t GetNative() const { return &Do; }                     \
 		virtual void Install(void * src) { hook_.Install(src, (void *)&Do); }  \
                                                                                \
 	private:                                                                   \
@@ -356,8 +420,10 @@ class NativeHook<RET()> : public NativeHook0<RET> { protected: NativeHook(char c
 		static subhook::Hook                                                   \
 			hook_;                                                             \
 	};                                                                         \
-	hooked_##func;                                                             \
-	subhook::Hook hooked_##func_::hook_
+	HOOK_NATIVE_DECL
+
+#define HOOK_IMPL(func) \
+	CHook_##func::Do
 
 #if 0
 
@@ -367,4 +433,9 @@ HOOK_NATIVE(SetPlayerPos, bool(int, float, float, float));
 #define SetPlayerPos hooked_SetPlayerPos
 
 #endif
+
+#include "../NATIVES.hpp"
+
+#undef HOOK_NATIVE
+#undef HOOK_NATIVE_DECL
 

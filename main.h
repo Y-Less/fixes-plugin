@@ -1,5 +1,4 @@
-#ifndef MAIN_H_
-#define MAIN_H_
+#pragma once
 
 #include <samplog/PluginLogger.h>
 
@@ -16,8 +15,9 @@ typedef void (* logprintf_t)(char const * format, ...);
 extern logprintf_t
 	logprintf;
 
-#endif
-
 // Include all the `extern` declarations for the fix information.
 #include "src/DeclaredFix.hpp"
+
+// Include all the hooked natives.
+#include "src/NativeHook.hpp"
 

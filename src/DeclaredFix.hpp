@@ -1,5 +1,4 @@
-#ifndef DESCRIPTIONS_H_
-#define DESCRIPTIONS_H_
+#pragma once
 
 struct fix_description_s
 {
@@ -62,8 +61,6 @@ private:
 
 #define FIX(name) ((bool)FIX_##name##_)
 
-#endif
-
 #ifndef DEFINE_FIX
 	// If this symbol already exists, it is probably doing something special.
 	// Otherwise, just use this to define the fix as `extern` by default, so
@@ -71,7 +68,7 @@ private:
 	#define DEFINE_FIX(name,comments) extern DeclaredFix<FIXES_CHECK_DEFINED_(name)> const FIX_##name##_;
 #endif
 
-#include "../README.h"
+#include "../README.hpp"
 
 #undef DEFINE_FIX
 

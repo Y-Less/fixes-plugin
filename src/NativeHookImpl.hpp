@@ -4,7 +4,7 @@ class NATIVE_HOOK_NAME : public NativeHookBase
 public:
 	typedef RET (*native_t)(NATIVE_HOOK_TYPES);
 
-	class ScopedCall : private subhook::ScopedHookRemove
+	class ScopedCall
 	{
 	public:
 		inline RET operator()(NATIVE_HOOK_PARAMETERS)
@@ -12,21 +12,47 @@ public:
 			return native_(NATIVE_HOOK_CALLING);
 		}
 
-		ScopedCall(ScopedCall const &&) = default;
-		ScopedCall const & operator(ScopedCall const &&) const = default;
+		~ScopedCall()
+		{
+			if (removed_)
+				hook_.Install();
+		}
 
-		~ScopedCall() = default;
 	private:
-		ScopedCall(subhook::Hook & hook, native_t native) : ScopedHookRemove(&hook), native_(native) {}
-		
-		ScopedCall const & operator(ScopedCall const &) const = delete;
-		ScopedCall(ScopedCall const &) = delete;
+		ScopedCall(subhook::Hook & hook, native_t native)
+		:
+			hook_(hook),
+			native_(native),
+			removed_(hook.Remove())
+		{
+		}
+
+		ScopedCall(ScopedCall const &) = default;
+		ScopedCall & operator=(ScopedCall const &) = default;
+
+		ScopedCall(ScopedCall && that)
+		:
+			hook_(std::move(that.hook_)),
+			native_(std::move(that.native_)),
+			removed_(std::move(that.removed_))
+		{
+			that.removed_ = false;
+		}
+
+		ScopedCall & operator=(ScopedCall const &&) = delete;
+
 		ScopedCall() = delete;
 
-		friend class NATIVE_HOOK_NAME<RET>;
+		friend class NATIVE_HOOK_NAME<RET, NATIVE_HOOK_TYPES>;
+
+		subhook::Hook &
+			hook_;
 
 		native_t const
 			native_;
+
+		bool
+			removed_;
 	};
 
 	inline RET operator()(NATIVE_HOOK_PARAMETERS)
@@ -34,15 +60,17 @@ public:
 		return native_(NATIVE_HOOK_CALLING);
 	}
 
-	NATIVE_HOOK_NAME<RET>::ScopedCall operator*()
+	ScopedCall operator*()
 	{
-		NATIVE_HOOK_NAME<RET>::ScopedCall
+		ScopedCall
 			ret(GetHook(), GetNative());
 		return ret;
 	}
 
 protected:
 	NATIVE_HOOK_NAME(char const * const name, native_t native) : NativeHookBase(name), native_(native) {}
+	virtual native_t GetNative() const = 0;
+	~NATIVE_HOOK_NAME() = default;
 
 private:
 	native_t const
@@ -55,7 +83,7 @@ class NATIVE_HOOK_NAME<void, NATIVE_HOOK_TYPES> : public NativeHookBase
 public:
 	typedef void (*native_t)(NATIVE_HOOK_TYPES);
 
-	class ScopedCall : private subhook::ScopedHookRemove
+	class ScopedCall
 	{
 	public:
 		inline void operator()(NATIVE_HOOK_PARAMETERS)
@@ -63,21 +91,47 @@ public:
 			native_(NATIVE_HOOK_CALLING);
 		}
 
-		ScopedCall(ScopedCall const &&) = default;
-		ScopedCall const & operator(ScopedCall const &&) const = default;
+		~ScopedCall()
+		{
+			if (removed_)
+				hook_.Install();
+		}
 
-		~ScopedCall() = default;
 	private:
-		ScopedCall(subhook::Hook & hook, native_t native) : ScopedHookRemove(&hook), native_(native) {}
-		
-		ScopedCall const & operator(ScopedCall const &) const = delete;
-		ScopedCall(ScopedCall const &) = delete;
+		ScopedCall(subhook::Hook & hook, native_t native)
+		:
+			hook_(hook),
+			native_(native),
+			removed_(hook.Remove())
+		{
+		}
+
+		ScopedCall(ScopedCall const &) = default;
+		ScopedCall & operator=(ScopedCall const &) = default;
+
+		ScopedCall(ScopedCall && that)
+		:
+			hook_(std::move(that.hook_)),
+			native_(std::move(that.native_)),
+			removed_(std::move(that.removed_))
+		{
+			that.removed_ = false;
+		}
+
+		ScopedCall & operator=(ScopedCall const &&) = delete;
+
 		ScopedCall() = delete;
 
-		friend class NATIVE_HOOK_NAME<void>;
+		friend class NATIVE_HOOK_NAME<void, NATIVE_HOOK_TYPES>;
+
+		subhook::Hook &
+			hook_;
 
 		native_t const
 			native_;
+
+		bool
+			removed_;
 	};
 
 	inline void operator()(NATIVE_HOOK_PARAMETERS)
@@ -85,15 +139,17 @@ public:
 		native_(NATIVE_HOOK_CALLING);
 	}
 
-	NATIVE_HOOK_NAME<void>::ScopedCall operator*()
+	ScopedCall operator*()
 	{
-		NATIVE_HOOK_NAME<void>::ScopedCall
+		ScopedCall
 			ret(GetHook(), GetNative());
 		return ret;
 	}
 
 protected:
 	NATIVE_HOOK_NAME(char const * const name, native_t native) : NativeHookBase(name), native_(native) {}
+	virtual native_t GetNative() const = 0;
+	~NATIVE_HOOK_NAME() = default;
 
 private:
 	native_t const

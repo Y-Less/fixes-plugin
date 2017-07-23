@@ -9,20 +9,9 @@
 #define DEFINE_FIX(name,comments) \
 	DeclaredFix<FIXES_CHECK_DEFINED_(name)> const FIX_##name##_(fix_description_s {} comments )
 
-#define HOOK_NATIVE(func,type) \
-	class hooked_##func##_ : public NativeHook<type>                           \
-	{                                                                          \
-	public:                                                                    \
-		hooked_##func##_() : NativeHook<type>(#func, &sampgdk_##func) {}       \
-                                                                               \
-	private:                                                                   \
-		static cell Do(AMX * amx, cell * params);                              \
-                                                                               \
-		static subhook::Hook                                                   \
-			hook_;                                                             \
-	}                                                                          \
-	hooked_##func;                                                             \
-	subhook::Hook hooked_##func_::hook_
+#define HOOK_NATIVE_DECL(func) \
+	CHook_##func hooked_##func;                                                \
+	subhook::Hook CHook_##func::hook_
 
 #include "main.h"
 
