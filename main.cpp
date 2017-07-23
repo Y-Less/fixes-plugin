@@ -9,11 +9,12 @@
 #define DEFINE_FIX(name,comments) \
 	DeclaredFix<FIXES_CHECK_DEFINED_(name)> const FIX_##name##_(fix_description_s {} comments )
 
-#define HOOK_NATIVE_DECL(func) \
-	CHook_##func hooked_##func;                                                \
-	subhook::Hook CHook_##func::hook_
-
 #include "main.h"
+
+HOOK(SetPlayerPos, cell(AMX * amx, cell * params))
+{
+	return 0;
+}
 
 extern void *
 	pAMXFunctions;

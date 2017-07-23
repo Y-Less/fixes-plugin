@@ -60,19 +60,21 @@ public:
 		return native_(NATIVE_HOOK_CALLING);
 	}
 
-	ScopedCall operator*()
+	ScopedCall operator*() const
 	{
 		ScopedCall
-			ret(GetHook(), GetNative());
+			ret(hook_, native_);
 		return ret;
 	}
 
 protected:
-	NATIVE_HOOK_NAME(char const * const name, native_t native) : NativeHookBase(name), native_(native) {}
-	virtual native_t GetNative() const = 0;
+	NATIVE_HOOK_NAME(char const * const name, native_t native, hooked_t hooked, subhook::Hook & hook) : NativeHookBase(name, hooked), native_(native), hook_(hook) {}
 	~NATIVE_HOOK_NAME() = default;
 
 private:
+	subhook::Hook &
+		hook_;
+
 	native_t const
 		native_;
 };
@@ -139,23 +141,25 @@ public:
 		native_(NATIVE_HOOK_CALLING);
 	}
 
-	ScopedCall operator*()
+	ScopedCall operator*() const
 	{
 		ScopedCall
-			ret(GetHook(), GetNative());
+			ret(hook_, native_);
 		return ret;
 	}
 
 protected:
-	NATIVE_HOOK_NAME(char const * const name, native_t native) : NativeHookBase(name), native_(native) {}
-	virtual native_t GetNative() const = 0;
+	NATIVE_HOOK_NAME(char const * const name, native_t native, hooked_t hooked, subhook::Hook & hook) : NativeHookBase(name, hooked), native_(native), hook_(hook) {}
 	~NATIVE_HOOK_NAME() = default;
 
 private:
+	subhook::Hook &
+		hook_;
+
 	native_t const
 		native_;
 };
 
 template <typename RET, NATIVE_HOOK_TEMPLATE>
-class NativeHook<RET(NATIVE_HOOK_TYPES)> : public NATIVE_HOOK_NAME<RET, NATIVE_HOOK_TYPES> { protected: NativeHook(char const * const name, NATIVE_HOOK_NAME<RET, NATIVE_HOOK_TYPES>::native_t native) : NATIVE_HOOK_NAME(name, native) {} };
+class NativeHook<RET(NATIVE_HOOK_TYPES)> : public NATIVE_HOOK_NAME<RET, NATIVE_HOOK_TYPES> { protected: NativeHook(char const * const name, native_t native, hooked_t hooked, subhook::Hook & hook) : NATIVE_HOOK_NAME(name, native, hooked, hook) {} };
 

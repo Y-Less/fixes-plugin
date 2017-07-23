@@ -14,15 +14,14 @@ public:
 	void Init()
 	{
 		// If a known native matches the stored name, install the hook.
-		Install(NULL);
+		//Install(NULL);
 	}
 
 protected:
-	NativeHookBase(char const * const name) : name_(name) {}
-	~NativeHookBase() = default;
+	typedef cell (*hooked_t)(AMX *, cell *);
 
-	virtual subhook::Hook & GetHook() const = 0;
-	virtual void Install(void * src) = 0;
+	NativeHookBase(char const * const name, hooked_t hooked) : name_(name), hooked_(hooked) {}
+	~NativeHookBase() = default;
 
 private:
 	NativeHookBase() = delete;
@@ -33,6 +32,9 @@ private:
 
 	char const * const
 		name_;
+
+	hooked_t const
+		hooked_;
 };
 
 template <typename FUNC_TYPE>
@@ -104,16 +106,18 @@ public:
 	ScopedCall operator*()
 	{
 		ScopedCall
-			ret(GetHook(), GetNative());
+			ret(hook_, native_);
 		return ret;
 	}
 
 protected:
-	NativeHook0(char const * const name, native_t native) : NativeHookBase(name), native_(native) {}
-	virtual native_t GetNative() const = 0;
+	NativeHook0(char const * const name, native_t native, hooked_t hooked, subhook::Hook & hook) : NativeHookBase(name, hooked), native_(native), hook_(hook) {}
 	~NativeHook0() = default;
 
 private:
+	subhook::Hook &
+		hook_;
+
 	native_t const
 		native_;
 };
@@ -184,22 +188,24 @@ public:
 	ScopedCall operator*() const
 	{
 		ScopedCall
-			ret(GetHook(), GetNative());
+			ret(hook_, native_);
 		return ret;
 	}
 
 protected:
-	NativeHook0(char const * const name, native_t native) : NativeHookBase(name), native_(native) {}
-	virtual native_t GetNative() const = 0;
+	NativeHook0(char const * const name, native_t native, hooked_t hooked, subhook::Hook & hook) : NativeHookBase(name, hooked), native_(native), hook_(hook) {}
 	~NativeHook0() = default;
 
 private:
+	subhook::Hook &
+		hook_;
+
 	native_t const
 		native_;
 };
 
 template <typename RET>
-class NativeHook<RET()> : public NativeHook0<RET> { protected: NativeHook(char const * const name, NativeHook0<RET>::native_t native) : NativeHook0(name, native) {} };
+class NativeHook<RET()> : public NativeHook0<RET> { protected: NativeHook(char const * const name, native_t native, hooked_t hooked, subhook::Hook & hook) : NativeHook0(name, native, hooked, hook) {} };
 
 // Defer declaring the other classes to a super macro file.
 #define NATIVE_HOOK_TEMPLATE   typename A
@@ -394,48 +400,56 @@ class NativeHook<RET()> : public NativeHook0<RET> { protected: NativeHook(char c
 #undef NATIVE_HOOK_PARAMETERS
 #undef NATIVE_HOOK_CALLING
 
-#if !defined HOOK_NATIVE_DECL
-	#define HOOK_NATIVE_DECL(func) extern CHook_##func::hook_ hooked_##func
-#endif
-
 // The hooks and calls for each class are always static, because otherwise it
 // would make installing hooks MUCH harder - we would need stubs that could
 // handle class pointers.  Doing that would negate needing a different class
 // for every hook type, even when the parameters are the same, but this was is
 // probably not much more generated code, and vastly simpler.
-#define HOOK_NATIVE(func,type) \
-	class CHook_##func : public NativeHook<type>                               \
+#define HOOK(func,type) \
+	extern class CHook_##func : public NativeHook<type>                        \
 	{                                                                          \
 	public:                                                                    \
-		CHook_##func() : NativeHook<type>(#func, &sampgdk_##func) {}           \
-                                                                               \
-	protected:                                                                 \
-		virtual subhook::Hook & GetHook() const { return hook_; }              \
-		virtual native_t GetNative() const { return &Do; }                     \
-		virtual void Install(void * src) { hook_.Install(src, (void *)&Do); }  \
+		CHook_##func() :                                                       \
+			NativeHook<type>(#func, &sampgdk_##func, &PreDo, hook_) {}         \
                                                                                \
 	private:                                                                   \
-		static cell Do(AMX * amx, cell * params);                              \
+		static cell PreDo(AMX * a, cell * c)                                   \
+		{                                                                      \
+			subhook::ScopedHookRemove                                          \
+				undo(&hook_);                                                  \
+			return Do(a, c);                                                   \
+		}                                                                      \
+		static cell Do(AMX *, cell *);                                         \
                                                                                \
 		static subhook::Hook                                                   \
 			hook_;                                                             \
-	};                                                                         \
-	HOOK_NATIVE_DECL
-
-#define HOOK_IMPL(func) \
-	CHook_##func::Do
+	} hooked_##func
 
 #if 0
 
 // Example:
+
+// In the NATIVES.hpp header:
 #undef  SetPlayerPos
-HOOK_NATIVE(SetPlayerPos, bool(int, float, float, float));
+HOOK(SetPlayerPos, bool(int, float, float, float));
 #define SetPlayerPos hooked_SetPlayerPos
+
+// In your code:
+HOOK(SetPlayerPos, cell(AMX * amx, cell * params))
+{
+	// Implementation here...
+}
 
 #endif
 
 #include "../NATIVES.hpp"
 
-#undef HOOK_NATIVE
-#undef HOOK_NATIVE_DECL
+#undef HOOK
+
+#define HOOK(func,type) \
+	CHook_##func hooked_##func;                                                \
+	subhook::Hook CHook_##func::hook_;                                         \
+	cell CHook_##func::HOOK_REMOVE_##type
+
+#define HOOK_REMOVE_cell Do
 
