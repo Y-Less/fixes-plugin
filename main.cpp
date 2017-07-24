@@ -11,11 +11,6 @@
 
 #include "main.h"
 
-HOOK(SetPlayerPos, cell(AMX * amx, cell * params))
-{
-	return 0;
-}
-
 extern void *
 	pAMXFunctions;
 

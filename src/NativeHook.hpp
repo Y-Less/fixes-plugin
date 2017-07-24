@@ -8,6 +8,20 @@
 #include <sampgdk/a_actor.h>
 #include <sampgdk/a_http.h>
 
+#define HOOK_TYPE_WITHOUT_PARAMS_void(...)  void
+#define HOOK_TYPE_WITHOUT_PARAMS_int(...)   int
+#define HOOK_TYPE_WITHOUT_PARAMS_float(...) float
+#define HOOK_TYPE_WITHOUT_PARAMS_bool(...)  bool
+#define HOOK_TYPE_WITHOUT_PARAMS_void(...)  void
+#define HOOK_TYPE_WITHOUT_PARAMS_cell(...)  cell
+
+#define HOOK_TYPE_WITHOUT_RETURN_void(...)  (__VA_ARGS__)
+#define HOOK_TYPE_WITHOUT_RETURN_int(...)   (__VA_ARGS__)
+#define HOOK_TYPE_WITHOUT_RETURN_float(...) (__VA_ARGS__)
+#define HOOK_TYPE_WITHOUT_RETURN_bool(...)  (__VA_ARGS__)
+#define HOOK_TYPE_WITHOUT_RETURN_void(...)  (__VA_ARGS__)
+#define HOOK_TYPE_WITHOUT_RETURN_cell(...)  (__VA_ARGS__)
+
 class NativeHookBase
 {
 public:
@@ -20,10 +34,40 @@ public:
 protected:
 	typedef cell (*hooked_t)(AMX *, cell *);
 
-	NativeHookBase(char const * const name, hooked_t hooked) : name_(name), hooked_(hooked) {}
+	NativeHookBase(char const * const name, hooked_t hooked) : name_(name), hooked_(hooked), hook_(), amx_(0), params_(0) {}
 	~NativeHookBase() = default;
 
+	subhook::Hook & GetHook() { return hook_; }
+
+	AMX * GetAMX() const { return amx_; }
+	cell * GetParams() const { return params_; }
+	
+	cell CallDoOuter(unsigned int count, AMX * amx, cell * params)
+	{
+		cell
+			ret = 0;
+		if (amx && params)
+		{
+			// Check that there are enough parameters.
+			if (count * sizeof (cell) > (unsigned int)params[0])
+			{
+				// TODO: Logging.
+				return 0;
+			}
+			subhook::ScopedHookRemove
+				undo(&hook_);
+			amx_ = amx;
+			params_ = params;
+			ret = this->CallDoInner(params);
+			params_ = 0;
+			amx_ = 0;
+		}
+		return (cell)ret;
+	}
+
 private:
+	virtual cell CallDoInner(cell * params) = 0;
+
 	NativeHookBase() = delete;
 	NativeHookBase(NativeHookBase const &) = delete;
 	NativeHookBase(NativeHookBase const &&) = delete;
@@ -35,6 +79,15 @@ private:
 
 	hooked_t const
 		hooked_;
+
+	subhook::Hook
+		hook_;
+
+	AMX *
+		amx_;
+
+	cell *
+		params_;
 };
 
 template <typename FUNC_TYPE>
@@ -42,10 +95,11 @@ class NativeHook {};
 
 // A pretty horrible combination of templates that make hooks quite seamless.
 template <typename RET>
-class NativeHook0 : public NativeHookBase
+class NativeHook0 : protected NativeHookBase
 {
 public:
 	typedef RET (*native_t)();
+	const unsigned int PARAMS = 0;
 
 	class ScopedCall
 	{
@@ -106,17 +160,21 @@ public:
 	ScopedCall operator*()
 	{
 		ScopedCall
-			ret(hook_, native_);
+			ret(GetHook(), native_);
 		return ret;
 	}
 
 protected:
-	NativeHook0(char const * const name, native_t native, hooked_t hooked, subhook::Hook & hook) : NativeHookBase(name, hooked), native_(native), hook_(hook) {}
+	NativeHook0(char const * const name, native_t native, hooked_t hooked) : NativeHookBase(name, hooked), native_(native) {}
 	~NativeHook0() = default;
 
 private:
-	subhook::Hook &
-		hook_;
+	cell CallDoInner(cell * params)
+	{
+		return (cell)this->Do();
+	}
+
+	virtual RET Do() const = 0;
 
 	native_t const
 		native_;
@@ -124,12 +182,12 @@ private:
 
 // Template specialisation for void returns, since they can't use "return X()".
 template <>
-class NativeHook0<void> : public NativeHookBase
+class NativeHook0<void> : protected NativeHookBase
 {
 public:
 	typedef void (*native_t)();
 
-	class ScopedCall //: private subhook::ScopedHookRemove
+	class ScopedCall
 	{
 	public:
 		inline void operator()()
@@ -185,27 +243,32 @@ public:
 		native_();
 	}
 
-	ScopedCall operator*() const
+	ScopedCall operator*()
 	{
 		ScopedCall
-			ret(hook_, native_);
+			ret(GetHook(), native_);
 		return ret;
 	}
 
 protected:
-	NativeHook0(char const * const name, native_t native, hooked_t hooked, subhook::Hook & hook) : NativeHookBase(name, hooked), native_(native), hook_(hook) {}
+	NativeHook0(char const * const name, native_t native, hooked_t hooked) : NativeHookBase(name, hooked), native_(native) {}
 	~NativeHook0() = default;
 
 private:
-	subhook::Hook &
-		hook_;
+	cell CallDoInner(cell * params)
+	{
+		this->Do();
+		return 0;
+	}
+
+	virtual void Do() const = 0;
 
 	native_t const
 		native_;
 };
 
 template <typename RET>
-class NativeHook<RET()> : public NativeHook0<RET> { protected: NativeHook(char const * const name, native_t native, hooked_t hooked, subhook::Hook & hook) : NativeHook0(name, native, hooked, hook) {} };
+class NativeHook<RET()> : public NativeHook0<RET> { protected: static unsigned int const PARAMS = 0; NativeHook(char const * const name, native_t native, hooked_t hooked) : NativeHook0(name, native, hooked) {} };
 
 // Defer declaring the other classes to a super macro file.
 #define NATIVE_HOOK_TEMPLATE   typename A
@@ -213,7 +276,9 @@ class NativeHook<RET()> : public NativeHook0<RET> { protected: NativeHook(char c
 #define NATIVE_HOOK_TYPES      A
 #define NATIVE_HOOK_PARAMETERS A a
 #define NATIVE_HOOK_CALLING    a
+#define NATIVE_HOOK_NUMBER     1
 #include "NativeHookImpl.hpp"
+#undef NATIVE_HOOK_NUMBER
 #undef NATIVE_HOOK_TEMPLATE
 #undef NATIVE_HOOK_NAME
 #undef NATIVE_HOOK_TYPES
@@ -225,7 +290,9 @@ class NativeHook<RET()> : public NativeHook0<RET> { protected: NativeHook(char c
 #define NATIVE_HOOK_TYPES      A, B
 #define NATIVE_HOOK_PARAMETERS A a, B b
 #define NATIVE_HOOK_CALLING    a, b
+#define NATIVE_HOOK_NUMBER     2
 #include "NativeHookImpl.hpp"
+#undef NATIVE_HOOK_NUMBER
 #undef NATIVE_HOOK_TEMPLATE
 #undef NATIVE_HOOK_NAME
 #undef NATIVE_HOOK_TYPES
@@ -237,7 +304,9 @@ class NativeHook<RET()> : public NativeHook0<RET> { protected: NativeHook(char c
 #define NATIVE_HOOK_TYPES      A, B, C
 #define NATIVE_HOOK_PARAMETERS A a, B b, C c
 #define NATIVE_HOOK_CALLING    a, b, c
+#define NATIVE_HOOK_NUMBER     3
 #include "NativeHookImpl.hpp"
+#undef NATIVE_HOOK_NUMBER
 #undef NATIVE_HOOK_TEMPLATE
 #undef NATIVE_HOOK_NAME
 #undef NATIVE_HOOK_TYPES
@@ -249,7 +318,9 @@ class NativeHook<RET()> : public NativeHook0<RET> { protected: NativeHook(char c
 #define NATIVE_HOOK_TYPES      A, B, C, D
 #define NATIVE_HOOK_PARAMETERS A a, B b, C c, D d
 #define NATIVE_HOOK_CALLING    a, b, c, d
+#define NATIVE_HOOK_NUMBER     4
 #include "NativeHookImpl.hpp"
+#undef NATIVE_HOOK_NUMBER
 #undef NATIVE_HOOK_TEMPLATE
 #undef NATIVE_HOOK_NAME
 #undef NATIVE_HOOK_TYPES
@@ -261,7 +332,9 @@ class NativeHook<RET()> : public NativeHook0<RET> { protected: NativeHook(char c
 #define NATIVE_HOOK_TYPES      A, B, C, D, E
 #define NATIVE_HOOK_PARAMETERS A a, B b, C c, D d, E e
 #define NATIVE_HOOK_CALLING    a, b, c, d, e
+#define NATIVE_HOOK_NUMBER     5
 #include "NativeHookImpl.hpp"
+#undef NATIVE_HOOK_NUMBER
 #undef NATIVE_HOOK_TEMPLATE
 #undef NATIVE_HOOK_NAME
 #undef NATIVE_HOOK_TYPES
@@ -273,7 +346,9 @@ class NativeHook<RET()> : public NativeHook0<RET> { protected: NativeHook(char c
 #define NATIVE_HOOK_TYPES      A, B, C, D, E, F
 #define NATIVE_HOOK_PARAMETERS A a, B b, C c, D d, E e, F f
 #define NATIVE_HOOK_CALLING    a, b, c, d, e, f
+#define NATIVE_HOOK_NUMBER     6
 #include "NativeHookImpl.hpp"
+#undef NATIVE_HOOK_NUMBER
 #undef NATIVE_HOOK_TEMPLATE
 #undef NATIVE_HOOK_NAME
 #undef NATIVE_HOOK_TYPES
@@ -285,7 +360,9 @@ class NativeHook<RET()> : public NativeHook0<RET> { protected: NativeHook(char c
 #define NATIVE_HOOK_TYPES      A, B, C, D, E, F, G
 #define NATIVE_HOOK_PARAMETERS A a, B b, C c, D d, E e, F f, G g
 #define NATIVE_HOOK_CALLING    a, b, c, d, e, f, g
+#define NATIVE_HOOK_NUMBER     7
 #include "NativeHookImpl.hpp"
+#undef NATIVE_HOOK_NUMBER
 #undef NATIVE_HOOK_TEMPLATE
 #undef NATIVE_HOOK_NAME
 #undef NATIVE_HOOK_TYPES
@@ -297,7 +374,9 @@ class NativeHook<RET()> : public NativeHook0<RET> { protected: NativeHook(char c
 #define NATIVE_HOOK_TYPES      A, B, C, D, E, F, G, H
 #define NATIVE_HOOK_PARAMETERS A a, B b, C c, D d, E e, F f, G g, H h
 #define NATIVE_HOOK_CALLING    a, b, c, d, e, f, g, h
+#define NATIVE_HOOK_NUMBER     8
 #include "NativeHookImpl.hpp"
+#undef NATIVE_HOOK_NUMBER
 #undef NATIVE_HOOK_TEMPLATE
 #undef NATIVE_HOOK_NAME
 #undef NATIVE_HOOK_TYPES
@@ -309,7 +388,9 @@ class NativeHook<RET()> : public NativeHook0<RET> { protected: NativeHook(char c
 #define NATIVE_HOOK_TYPES      A, B, C, D, E, F, G, H, I
 #define NATIVE_HOOK_PARAMETERS A a, B b, C c, D d, E e, F f, G g, H h, I i
 #define NATIVE_HOOK_CALLING    a, b, c, d, e, f, g, h, i
+#define NATIVE_HOOK_NUMBER     9
 #include "NativeHookImpl.hpp"
+#undef NATIVE_HOOK_NUMBER
 #undef NATIVE_HOOK_TEMPLATE
 #undef NATIVE_HOOK_NAME
 #undef NATIVE_HOOK_TYPES
@@ -321,7 +402,9 @@ class NativeHook<RET()> : public NativeHook0<RET> { protected: NativeHook(char c
 #define NATIVE_HOOK_TYPES      A, B, C, D, E, F, G, H, I, J
 #define NATIVE_HOOK_PARAMETERS A a, B b, C c, D d, E e, F f, G g, H h, I i, J j
 #define NATIVE_HOOK_CALLING    a, b, c, d, e, f, g, h, i, j
+#define NATIVE_HOOK_NUMBER     10
 #include "NativeHookImpl.hpp"
+#undef NATIVE_HOOK_NUMBER
 #undef NATIVE_HOOK_TEMPLATE
 #undef NATIVE_HOOK_NAME
 #undef NATIVE_HOOK_TYPES
@@ -333,7 +416,9 @@ class NativeHook<RET()> : public NativeHook0<RET> { protected: NativeHook(char c
 #define NATIVE_HOOK_TYPES      A, B, C, D, E, F, G, H, I, J, K
 #define NATIVE_HOOK_PARAMETERS A a, B b, C c, D d, E e, F f, G g, H h, I i, J j, K k
 #define NATIVE_HOOK_CALLING    a, b, c, d, e, f, g, h, i, j, k
+#define NATIVE_HOOK_NUMBER     11
 #include "NativeHookImpl.hpp"
+#undef NATIVE_HOOK_NUMBER
 #undef NATIVE_HOOK_TEMPLATE
 #undef NATIVE_HOOK_NAME
 #undef NATIVE_HOOK_TYPES
@@ -345,7 +430,9 @@ class NativeHook<RET()> : public NativeHook0<RET> { protected: NativeHook(char c
 #define NATIVE_HOOK_TYPES      A, B, C, D, E, F, G, H, I, J, K, L
 #define NATIVE_HOOK_PARAMETERS A a, B b, C c, D d, E e, F f, G g, H h, I i, J j, K k, L l
 #define NATIVE_HOOK_CALLING    a, b, c, d, e, f, g, h, i, j, k, l
+#define NATIVE_HOOK_NUMBER     12
 #include "NativeHookImpl.hpp"
+#undef NATIVE_HOOK_NUMBER
 #undef NATIVE_HOOK_TEMPLATE
 #undef NATIVE_HOOK_NAME
 #undef NATIVE_HOOK_TYPES
@@ -357,7 +444,9 @@ class NativeHook<RET()> : public NativeHook0<RET> { protected: NativeHook(char c
 #define NATIVE_HOOK_TYPES      A, B, C, D, E, F, G, H, I, J, K, L, M
 #define NATIVE_HOOK_PARAMETERS A a, B b, C c, D d, E e, F f, G g, H h, I i, J j, K k, L l, M m
 #define NATIVE_HOOK_CALLING    a, b, c, d, e, f, g, h, i, j, k, l, m
+#define NATIVE_HOOK_NUMBER     13
 #include "NativeHookImpl.hpp"
+#undef NATIVE_HOOK_NUMBER
 #undef NATIVE_HOOK_TEMPLATE
 #undef NATIVE_HOOK_NAME
 #undef NATIVE_HOOK_TYPES
@@ -369,7 +458,9 @@ class NativeHook<RET()> : public NativeHook0<RET> { protected: NativeHook(char c
 #define NATIVE_HOOK_TYPES      A, B, C, D, E, F, G, H, I, J, K, L, M, N
 #define NATIVE_HOOK_PARAMETERS A a, B b, C c, D d, E e, F f, G g, H h, I i, J j, K k, L l, M m, N n
 #define NATIVE_HOOK_CALLING    a, b, c, d, e, f, g, h, i, j, k, l, m, n
+#define NATIVE_HOOK_NUMBER     14
 #include "NativeHookImpl.hpp"
+#undef NATIVE_HOOK_NUMBER
 #undef NATIVE_HOOK_TEMPLATE
 #undef NATIVE_HOOK_NAME
 #undef NATIVE_HOOK_TYPES
@@ -381,7 +472,9 @@ class NativeHook<RET()> : public NativeHook0<RET> { protected: NativeHook(char c
 #define NATIVE_HOOK_TYPES      A, B, C, D, E, F, G, H, I, J, K, L, M, N, O
 #define NATIVE_HOOK_PARAMETERS A a, B b, C c, D d, E e, F f, G g, H h, I i, J j, K k, L l, M m, N n, O o
 #define NATIVE_HOOK_CALLING    a, b, c, d, e, f, g, h, i, j, k, l, m, n, o
+#define NATIVE_HOOK_NUMBER     15
 #include "NativeHookImpl.hpp"
+#undef NATIVE_HOOK_NUMBER
 #undef NATIVE_HOOK_TEMPLATE
 #undef NATIVE_HOOK_NAME
 #undef NATIVE_HOOK_TYPES
@@ -393,7 +486,9 @@ class NativeHook<RET()> : public NativeHook0<RET> { protected: NativeHook(char c
 #define NATIVE_HOOK_TYPES      A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P
 #define NATIVE_HOOK_PARAMETERS A a, B b, C c, D d, E e, F f, G g, H h, I i, J j, K k, L l, M m, N n, O o, P p
 #define NATIVE_HOOK_CALLING    a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p
+#define NATIVE_HOOK_NUMBER     16
 #include "NativeHookImpl.hpp"
+#undef NATIVE_HOOK_NUMBER
 #undef NATIVE_HOOK_TEMPLATE
 #undef NATIVE_HOOK_NAME
 #undef NATIVE_HOOK_TYPES
@@ -406,24 +501,23 @@ class NativeHook<RET()> : public NativeHook0<RET> { protected: NativeHook(char c
 // for every hook type, even when the parameters are the same, but this was is
 // probably not much more generated code, and vastly simpler.
 #define HOOK(func,type) \
-	extern class CHook_##func : public NativeHook<type>                        \
+	class CHook_##func : public NativeHook<type>                               \
 	{                                                                          \
 	public:                                                                    \
 		CHook_##func() :                                                       \
-			NativeHook<type>(#func, &sampgdk_##func, &PreDo, hook_) {}         \
+			NativeHook<type>(#func, &sampgdk_##func, &PreDo) {}                \
                                                                                \
 	private:                                                                   \
-		static cell PreDo(AMX * a, cell * c)                                   \
+		static cell PreDo(AMX * amx, cell * params)                            \
 		{                                                                      \
-			subhook::ScopedHookRemove                                          \
-				undo(&hook_);                                                  \
-			return Do(a, c);                                                   \
+			return impl_.CallDoOuter(NativeHook<type>::PARAMS, amx, params);   \
 		}                                                                      \
-		static cell Do(AMX *, cell *);                                         \
                                                                                \
-		static subhook::Hook                                                   \
-			hook_;                                                             \
-	} hooked_##func
+		HOOK_TYPE_WITHOUT_PARAMS_##type Do HOOK_TYPE_WITHOUT_RETURN_##type;    \
+                                                                               \
+		static CHook_##func                                                    \
+			impl_;                                                             \
+	}
 
 #if 0
 
@@ -447,9 +541,6 @@ HOOK(SetPlayerPos, cell(AMX * amx, cell * params))
 #undef HOOK
 
 #define HOOK(func,type) \
-	CHook_##func hooked_##func;                                                \
-	subhook::Hook CHook_##func::hook_;                                         \
-	cell CHook_##func::HOOK_REMOVE_##type
-
-#define HOOK_REMOVE_cell Do
+	CHook_##func CHook_##func::impl_;                                          \
+	HOOK_TYPE_WITHOUT_PARAMS_##type CHook_##func::Do HOOK_TYPE_WITHOUT_RETURN_##type
 
