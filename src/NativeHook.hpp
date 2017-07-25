@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdexcept>
+
 #include <subhook/subhook.h>
 #include <sampgdk/a_samp.h>
 #include <sampgdk/a_players.h>
@@ -7,6 +9,8 @@
 #include <sampgdk/a_objects.h>
 #include <sampgdk/a_actor.h>
 #include <sampgdk/a_http.h>
+
+#include "ParamCast.hpp"
 
 #define HOOK_TYPE_WITHOUT_PARAMS_int(...)   int
 #define HOOK_TYPE_WITHOUT_PARAMS_float(...) float
@@ -48,15 +52,12 @@ protected:
 		{
 			// Check that there are enough parameters.
 			if (count * sizeof (cell) > (unsigned int)params[0])
-			{
-				// TODO: Logging.
-				return 0;
-			}
+				throw std::invalid_argument("Insufficient arguments.");
 			subhook::ScopedHookRemove
 				undo(&hook_);
 			amx_ = amx;
 			params_ = params;
-			ret = this->CallDoInner(params);
+			ret = this->CallDoInner(amx, params);
 			params_ = 0;
 			amx_ = 0;
 		}
@@ -64,7 +65,7 @@ protected:
 	}
 
 private:
-	virtual cell CallDoInner(cell * params) = 0;
+	virtual cell CallDoInner(AMX *, cell *) = 0;
 
 	NativeHookBase() = delete;
 	NativeHookBase(NativeHookBase const &) = delete;
@@ -167,9 +168,11 @@ protected:
 	~NativeHook0() = default;
 
 private:
-	cell CallDoInner(cell * params)
+	cell CallDoInner(AMX *, cell *)
 	{
-		return (cell)this->Do();
+		RET
+			ret = this->Do();
+		return *(cell *)&ret;
 	}
 
 	virtual RET Do() const = 0;
@@ -253,10 +256,10 @@ protected:
 	~NativeHook0() = default;
 
 private:
-	cell CallDoInner(cell * params)
+	cell CallDoInner(AMX *, cell *)
 	{
 		this->Do();
-		return 0;
+		return 1;
 	}
 
 	virtual void Do() const = 0;
@@ -499,22 +502,31 @@ class NativeHook<RET()> : public NativeHook0<RET> { protected: static unsigned i
 // for every hook type, even when the parameters are the same, but this was is
 // probably not much more generated code, and vastly simpler.
 #define HOOK(func,type) \
-	class CHook_##func : public NativeHook<type>                               \
-	{                                                                          \
-	public:                                                                    \
-		CHook_##func() :                                                       \
-			NativeHook<type>(#func, &sampgdk_##func, &PreDo) {}                \
-                                                                               \
-	private:                                                                   \
-		static cell PreDo(AMX * amx, cell * params)                            \
-		{                                                                      \
-			return impl_.CallDoOuter(NativeHook<type>::PARAMS, amx, params);   \
-		}                                                                      \
-                                                                               \
-		HOOK_TYPE_WITHOUT_PARAMS_##type Do HOOK_TYPE_WITHOUT_RETURN_##type;    \
-                                                                               \
-		static CHook_##func                                                    \
-			impl_;                                                             \
+	class CHook_##func : public NativeHook<type>                                \
+	{                                                                           \
+	public:                                                                     \
+		CHook_##func() :                                                        \
+			NativeHook<type>(#func, &sampgdk_##func, &PreDo) {}                 \
+                                                                                \
+	private:                                                                    \
+		static cell PreDo(AMX * amx, cell * params)                             \
+		{                                                                       \
+			try                                                                 \
+			{                                                                   \
+				return impl_.CallDoOuter(NativeHook<type>::PARAMS, amx, params);\
+			}                                                                   \
+			catch (std::exception & e)                                          \
+			{                                                                   \
+				Log(LogLevel::ERROR, "Exception thrown in " #func ":");         \
+				Log(LogLevel::ERROR, e.what());                                 \
+			}                                                                   \
+			return 0;                                                           \
+		}                                                                       \
+                                                                                \
+		HOOK_TYPE_WITHOUT_PARAMS_##type Do HOOK_TYPE_WITHOUT_RETURN_##type;     \
+                                                                                \
+		static CHook_##func                                                     \
+			impl_;                                                              \
 	}
 
 #if 0

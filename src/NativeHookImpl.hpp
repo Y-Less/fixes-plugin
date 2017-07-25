@@ -73,57 +73,59 @@ protected:
 	~NATIVE_HOOK_NAME() = default;
 
 private:
-	cell CallDoInner(cell * params)
+	cell CallDoInner(AMX * amx, cell * params)
 	{
 		#if NATIVE_HOOK_NUMBER >= 1
-			ParamFromParams<A> a(params[1]);
+			ParamCast<A> a(amx, params, 1);
 		#endif
 		#if NATIVE_HOOK_NUMBER >= 2
-			ParamFromParams<B> b(params[2]);
+			ParamCast<B> b(amx, params, 2);
 		#endif
 		#if NATIVE_HOOK_NUMBER >= 3
-			ParamFromParams<C> c(params[3]);
+			ParamCast<C> c(amx, params, 3);
 		#endif
 		#if NATIVE_HOOK_NUMBER >= 4
-			ParamFromParams<D> d(params[4]);
+			ParamCast<D> d(amx, params, 4);
 		#endif
 		#if NATIVE_HOOK_NUMBER >= 5
-			ParamFromParams<E> e(params[5]);
+			ParamCast<E> e(amx, params, 5);
 		#endif
 		#if NATIVE_HOOK_NUMBER >= 6
-			ParamFromParams<F> f(params[6]);
+			ParamCast<F> f(amx, params, 6);
 		#endif
 		#if NATIVE_HOOK_NUMBER >= 7
-			ParamFromParams<G> g(params[7]);
+			ParamCast<G> g(amx, params, 7);
 		#endif
 		#if NATIVE_HOOK_NUMBER >= 8
-			ParamFromParams<H> h(params[8]);
+			ParamCast<H> h(amx, params, 8);
 		#endif
 		#if NATIVE_HOOK_NUMBER >= 9
-			ParamFromParams<I> i(params[9]);
+			ParamCast<I> i(amx, params, 9);
 		#endif
 		#if NATIVE_HOOK_NUMBER >= 10
-			ParamFromParams<J> j(params[10]);
+			ParamCast<J> j(amx, params, 0);
 		#endif
 		#if NATIVE_HOOK_NUMBER >= 11
-			ParamFromParams<K> k(params[11]);
+			ParamCast<K> k(amx, params, 1);
 		#endif
 		#if NATIVE_HOOK_NUMBER >= 12
-			ParamFromParams<L> l(params[12]);
+			ParamCast<L> l(amx, params, 2);
 		#endif
 		#if NATIVE_HOOK_NUMBER >= 13
-			ParamFromParams<M> m(params[13]);
+			ParamCast<M> m(amx, params, 3);
 		#endif
 		#if NATIVE_HOOK_NUMBER >= 14
-			ParamFromParams<N> n(params[14]);
+			ParamCast<N> n(amx, params, 4);
 		#endif
 		#if NATIVE_HOOK_NUMBER >= 15
-			ParamFromParams<O> o(params[15]);
+			ParamCast<O> o(amx, params, 5);
 		#endif
 		#if NATIVE_HOOK_NUMBER >= 16
-			ParamFromParams<P> p(params[16]);
+			ParamCast<P> p(amx, params, 6);
 		#endif
-			return (cell)this->Do(NATIVE_HOOK_CALLING);
+			RET
+				ret = this->Do(NATIVE_HOOK_CALLING);
+			return *(cell *)&ret;
 	}
 
 	virtual RET Do(NATIVE_HOOK_PARAMETERS) const = 0;
@@ -207,58 +209,58 @@ protected:
 	~NATIVE_HOOK_NAME() = default;
 
 private:
-	cell CallDoInner(cell * params)
+	cell CallDoInner(AMX * amx, cell * params)
 	{
 		#if NATIVE_HOOK_NUMBER >= 1
-			ParamFromParams<A> a(params[1]);
+			ParamCast<A> a(amx, params, 1);
 		#endif
 		#if NATIVE_HOOK_NUMBER >= 2
-			ParamFromParams<B> b(params[2]);
+			ParamCast<B> b(amx, params, 2);
 		#endif
 		#if NATIVE_HOOK_NUMBER >= 3
-			ParamFromParams<C> c(params[3]);
+			ParamCast<C> c(amx, params, 3);
 		#endif
 		#if NATIVE_HOOK_NUMBER >= 4
-			ParamFromParams<D> d(params[4]);
+			ParamCast<D> d(amx, params, 4);
 		#endif
 		#if NATIVE_HOOK_NUMBER >= 5
-			ParamFromParams<E> e(params[5]);
+			ParamCast<E> e(amx, params, 5);
 		#endif
 		#if NATIVE_HOOK_NUMBER >= 6
-			ParamFromParams<F> f(params[6]);
+			ParamCast<F> f(amx, params, 6);
 		#endif
 		#if NATIVE_HOOK_NUMBER >= 7
-			ParamFromParams<G> g(params[7]);
+			ParamCast<G> g(amx, params, 7);
 		#endif
 		#if NATIVE_HOOK_NUMBER >= 8
-			ParamFromParams<H> h(params[8]);
+			ParamCast<H> h(amx, params, 8);
 		#endif
 		#if NATIVE_HOOK_NUMBER >= 9
-			ParamFromParams<I> i(params[9]);
+			ParamCast<I> i(amx, params, 9);
 		#endif
 		#if NATIVE_HOOK_NUMBER >= 10
-			ParamFromParams<J> j(params[10]);
+			ParamCast<J> j(amx, params, 0);
 		#endif
 		#if NATIVE_HOOK_NUMBER >= 11
-			ParamFromParams<K> k(params[11]);
+			ParamCast<K> k(amx, params, 1);
 		#endif
 		#if NATIVE_HOOK_NUMBER >= 12
-			ParamFromParams<L> l(params[12]);
+			ParamCast<L> l(amx, params, 2);
 		#endif
 		#if NATIVE_HOOK_NUMBER >= 13
-			ParamFromParams<M> m(params[13]);
+			ParamCast<M> m(amx, params, 3);
 		#endif
 		#if NATIVE_HOOK_NUMBER >= 14
-			ParamFromParams<N> n(params[14]);
+			ParamCast<N> n(amx, params, 4);
 		#endif
 		#if NATIVE_HOOK_NUMBER >= 15
-			ParamFromParams<O> o(params[15]);
+			ParamCast<O> o(amx, params, 5);
 		#endif
 		#if NATIVE_HOOK_NUMBER >= 16
-			ParamFromParams<P> p(params[16]);
+			ParamCast<P> p(amx, params, 6);
 		#endif
 			this->Do(NATIVE_HOOK_CALLING);
-			return 0;
+			return 1;
 	}
 
 	virtual void Do(NATIVE_HOOK_PARAMETERS) const = 0;
