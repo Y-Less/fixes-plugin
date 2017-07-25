@@ -1,3 +1,9 @@
+#pragma once
+
+#include <stdexcept>
+
+typedef cell AMX_NATIVE_CALL (*native_t)(AMX *, cell *);
+
 #define HOOK_TYPE_WITHOUT_PARAMS_int(...)   int
 #define HOOK_TYPE_WITHOUT_PARAMS_float(...) float
 #define HOOK_TYPE_WITHOUT_PARAMS_bool(...)  bool
