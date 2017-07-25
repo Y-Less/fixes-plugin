@@ -13,18 +13,6 @@
 
 #include "ParamCast.hpp"
 
-#define HOOK_TYPE_WITHOUT_PARAMS_int(...)   int
-#define HOOK_TYPE_WITHOUT_PARAMS_float(...) float
-#define HOOK_TYPE_WITHOUT_PARAMS_bool(...)  bool
-#define HOOK_TYPE_WITHOUT_PARAMS_void(...)  void
-#define HOOK_TYPE_WITHOUT_PARAMS_cell(...)  cell
-
-#define HOOK_TYPE_WITHOUT_RETURN_int(...)   (__VA_ARGS__)
-#define HOOK_TYPE_WITHOUT_RETURN_float(...) (__VA_ARGS__)
-#define HOOK_TYPE_WITHOUT_RETURN_bool(...)  (__VA_ARGS__)
-#define HOOK_TYPE_WITHOUT_RETURN_void(...)  (__VA_ARGS__)
-#define HOOK_TYPE_WITHOUT_RETURN_cell(...)  (__VA_ARGS__)
-
 class NativeHookBase;
 
 extern std::list<NativeHookBase *> *
@@ -85,13 +73,25 @@ protected:
 		if (amx && params)
 		{
 			// Check that there are enough parameters.
-			if (count * sizeof (cell) > (unsigned int)params[0])
-				throw std::invalid_argument("Insufficient arguments.");
-			subhook::ScopedHookRemove
-				undo(&hook_);
 			amx_ = amx;
 			params_ = params;
-			ret = this->CallDoInner(amx, params);
+			try
+			{
+				if (count * sizeof (cell) > (unsigned int)params[0])
+					throw std::invalid_argument("Insufficient arguments.");
+				subhook::ScopedHookRemove
+					undo(&hook_);
+				ret = this->CallDoInner(amx, params);
+			}
+			catch (std::exception & e)
+			{
+				char
+					msg[1024];
+				sprintf(msg, "Exception thrown in %s: \"%s\"", name_, e.what());
+				Log(LogLevel::ERROR, msg);
+			}
+			params_ = 0;
+			amx_ = 0;
 		}
 		return (cell)ret;
 	}
@@ -549,16 +549,7 @@ class NativeHook<RET()> : public NativeHook0<RET> { protected: static unsigned i
 	private:                                                                    \
 		static cell PreDo(AMX * amx, cell * params)                             \
 		{                                                                       \
-			try                                                                 \
-			{                                                                   \
-				return FIXES_##func.CallDoOuter(NativeHook<type>::PARAMS, amx, params); \
-			}                                                                   \
-			catch (std::exception & e)                                          \
-			{                                                                   \
-				Log(LogLevel::ERROR, "Exception thrown in " #func ":");         \
-				Log(LogLevel::ERROR, e.what());                                 \
-			}                                                                   \
-			return 0;                                                           \
+			return FIXES_##func.CallDoOuter(NativeHook<type>::PARAMS, amx, params); \
 		}                                                                       \
                                                                                 \
 		HOOK_TYPE_WITHOUT_PARAMS_##type Do HOOK_TYPE_WITHOUT_RETURN_##type const; \
