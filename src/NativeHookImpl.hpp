@@ -3,7 +3,6 @@ class NATIVE_HOOK_NAME : protected NativeHookBase
 {
 public:
 	typedef RET (*native_t)(NATIVE_HOOK_TYPES);
-	typedef RET (NATIVE_HOOK_NAME<void, NATIVE_HOOK_TYPES>::*replacement_t)(NATIVE_HOOK_TYPES);
 
 	class ScopedCall
 	{
@@ -139,7 +138,6 @@ class NATIVE_HOOK_NAME<void, NATIVE_HOOK_TYPES> : protected NativeHookBase
 {
 public:
 	typedef void (*native_t)(NATIVE_HOOK_TYPES);
-	typedef void (NATIVE_HOOK_NAME<void, NATIVE_HOOK_TYPES>::*replacement_t)(NATIVE_HOOK_TYPES);
 
 	class ScopedCall
 	{

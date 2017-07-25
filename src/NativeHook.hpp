@@ -130,7 +130,6 @@ class NativeHook0 : protected NativeHookBase
 {
 public:
 	typedef RET (*native_t)();
-	const unsigned int PARAMS = 0;
 
 	class ScopedCall
 	{
