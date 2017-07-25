@@ -15,6 +15,8 @@ typedef void (* logprintf_t)(char const * format, ...);
 extern logprintf_t
 	logprintf;
 
+#define elemsof(array) (sizeof (array) / sizeof ((array)[0]))
+
 // Include all the `extern` declarations for the fix information.
 #include "src/DeclaredFix.hpp"
 

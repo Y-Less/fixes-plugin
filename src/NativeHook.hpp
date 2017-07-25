@@ -33,6 +33,21 @@ public:
 		//Install(NULL);
 	}
 
+	void Enable()
+	{
+		hook_.Install();
+	}
+
+	void Disable()
+	{
+		hook_.Remove();
+	}
+
+	bool IsEnabled() const
+	{
+		hook_.IsInstalled();
+	}
+
 protected:
 	typedef cell (*hooked_t)(AMX *, cell *);
 
@@ -280,11 +295,11 @@ class NativeHook<RET()> : public NativeHook0<RET> { protected: static unsigned i
 #define NATIVE_HOOK_NUMBER     1
 #include "NativeHookImpl.hpp"
 #undef NATIVE_HOOK_NUMBER
-#undef NATIVE_HOOK_TEMPLATE
-#undef NATIVE_HOOK_NAME
-#undef NATIVE_HOOK_TYPES
-#undef NATIVE_HOOK_PARAMETERS
 #undef NATIVE_HOOK_CALLING
+#undef NATIVE_HOOK_PARAMETERS
+#undef NATIVE_HOOK_TYPES
+#undef NATIVE_HOOK_NAME
+#undef NATIVE_HOOK_TEMPLATE
 
 #define NATIVE_HOOK_TEMPLATE   typename A, typename B
 #define NATIVE_HOOK_NAME       NativeHook2
@@ -294,11 +309,11 @@ class NativeHook<RET()> : public NativeHook0<RET> { protected: static unsigned i
 #define NATIVE_HOOK_NUMBER     2
 #include "NativeHookImpl.hpp"
 #undef NATIVE_HOOK_NUMBER
-#undef NATIVE_HOOK_TEMPLATE
-#undef NATIVE_HOOK_NAME
-#undef NATIVE_HOOK_TYPES
-#undef NATIVE_HOOK_PARAMETERS
 #undef NATIVE_HOOK_CALLING
+#undef NATIVE_HOOK_PARAMETERS
+#undef NATIVE_HOOK_TYPES
+#undef NATIVE_HOOK_NAME
+#undef NATIVE_HOOK_TEMPLATE
 
 #define NATIVE_HOOK_TEMPLATE   typename A, typename B, typename C
 #define NATIVE_HOOK_NAME       NativeHook3
@@ -308,11 +323,11 @@ class NativeHook<RET()> : public NativeHook0<RET> { protected: static unsigned i
 #define NATIVE_HOOK_NUMBER     3
 #include "NativeHookImpl.hpp"
 #undef NATIVE_HOOK_NUMBER
-#undef NATIVE_HOOK_TEMPLATE
-#undef NATIVE_HOOK_NAME
-#undef NATIVE_HOOK_TYPES
-#undef NATIVE_HOOK_PARAMETERS
 #undef NATIVE_HOOK_CALLING
+#undef NATIVE_HOOK_PARAMETERS
+#undef NATIVE_HOOK_TYPES
+#undef NATIVE_HOOK_NAME
+#undef NATIVE_HOOK_TEMPLATE
 
 #define NATIVE_HOOK_TEMPLATE   typename A, typename B, typename C, typename D
 #define NATIVE_HOOK_NAME       NativeHook4
@@ -322,11 +337,11 @@ class NativeHook<RET()> : public NativeHook0<RET> { protected: static unsigned i
 #define NATIVE_HOOK_NUMBER     4
 #include "NativeHookImpl.hpp"
 #undef NATIVE_HOOK_NUMBER
-#undef NATIVE_HOOK_TEMPLATE
-#undef NATIVE_HOOK_NAME
-#undef NATIVE_HOOK_TYPES
-#undef NATIVE_HOOK_PARAMETERS
 #undef NATIVE_HOOK_CALLING
+#undef NATIVE_HOOK_PARAMETERS
+#undef NATIVE_HOOK_TYPES
+#undef NATIVE_HOOK_NAME
+#undef NATIVE_HOOK_TEMPLATE
 
 #define NATIVE_HOOK_TEMPLATE   typename A, typename B, typename C, typename D, typename E
 #define NATIVE_HOOK_NAME       NativeHook5
@@ -336,11 +351,11 @@ class NativeHook<RET()> : public NativeHook0<RET> { protected: static unsigned i
 #define NATIVE_HOOK_NUMBER     5
 #include "NativeHookImpl.hpp"
 #undef NATIVE_HOOK_NUMBER
-#undef NATIVE_HOOK_TEMPLATE
-#undef NATIVE_HOOK_NAME
-#undef NATIVE_HOOK_TYPES
-#undef NATIVE_HOOK_PARAMETERS
 #undef NATIVE_HOOK_CALLING
+#undef NATIVE_HOOK_PARAMETERS
+#undef NATIVE_HOOK_TYPES
+#undef NATIVE_HOOK_NAME
+#undef NATIVE_HOOK_TEMPLATE
 
 #define NATIVE_HOOK_TEMPLATE   typename A, typename B, typename C, typename D, typename E, typename F
 #define NATIVE_HOOK_NAME       NativeHook6
@@ -350,11 +365,11 @@ class NativeHook<RET()> : public NativeHook0<RET> { protected: static unsigned i
 #define NATIVE_HOOK_NUMBER     6
 #include "NativeHookImpl.hpp"
 #undef NATIVE_HOOK_NUMBER
-#undef NATIVE_HOOK_TEMPLATE
-#undef NATIVE_HOOK_NAME
-#undef NATIVE_HOOK_TYPES
-#undef NATIVE_HOOK_PARAMETERS
 #undef NATIVE_HOOK_CALLING
+#undef NATIVE_HOOK_PARAMETERS
+#undef NATIVE_HOOK_TYPES
+#undef NATIVE_HOOK_NAME
+#undef NATIVE_HOOK_TEMPLATE
 
 #define NATIVE_HOOK_TEMPLATE   typename A, typename B, typename C, typename D, typename E, typename F, typename G
 #define NATIVE_HOOK_NAME       NativeHook7
@@ -364,11 +379,11 @@ class NativeHook<RET()> : public NativeHook0<RET> { protected: static unsigned i
 #define NATIVE_HOOK_NUMBER     7
 #include "NativeHookImpl.hpp"
 #undef NATIVE_HOOK_NUMBER
-#undef NATIVE_HOOK_TEMPLATE
-#undef NATIVE_HOOK_NAME
-#undef NATIVE_HOOK_TYPES
-#undef NATIVE_HOOK_PARAMETERS
 #undef NATIVE_HOOK_CALLING
+#undef NATIVE_HOOK_PARAMETERS
+#undef NATIVE_HOOK_TYPES
+#undef NATIVE_HOOK_NAME
+#undef NATIVE_HOOK_TEMPLATE
 
 #define NATIVE_HOOK_TEMPLATE   typename A, typename B, typename C, typename D, typename E, typename F, typename G, typename H
 #define NATIVE_HOOK_NAME       NativeHook8
@@ -378,11 +393,11 @@ class NativeHook<RET()> : public NativeHook0<RET> { protected: static unsigned i
 #define NATIVE_HOOK_NUMBER     8
 #include "NativeHookImpl.hpp"
 #undef NATIVE_HOOK_NUMBER
-#undef NATIVE_HOOK_TEMPLATE
-#undef NATIVE_HOOK_NAME
-#undef NATIVE_HOOK_TYPES
-#undef NATIVE_HOOK_PARAMETERS
 #undef NATIVE_HOOK_CALLING
+#undef NATIVE_HOOK_PARAMETERS
+#undef NATIVE_HOOK_TYPES
+#undef NATIVE_HOOK_NAME
+#undef NATIVE_HOOK_TEMPLATE
 
 #define NATIVE_HOOK_TEMPLATE   typename A, typename B, typename C, typename D, typename E, typename F, typename G, typename H, typename I
 #define NATIVE_HOOK_NAME       NativeHook9
@@ -392,11 +407,11 @@ class NativeHook<RET()> : public NativeHook0<RET> { protected: static unsigned i
 #define NATIVE_HOOK_NUMBER     9
 #include "NativeHookImpl.hpp"
 #undef NATIVE_HOOK_NUMBER
-#undef NATIVE_HOOK_TEMPLATE
-#undef NATIVE_HOOK_NAME
-#undef NATIVE_HOOK_TYPES
-#undef NATIVE_HOOK_PARAMETERS
 #undef NATIVE_HOOK_CALLING
+#undef NATIVE_HOOK_PARAMETERS
+#undef NATIVE_HOOK_TYPES
+#undef NATIVE_HOOK_NAME
+#undef NATIVE_HOOK_TEMPLATE
 
 #define NATIVE_HOOK_TEMPLATE   typename A, typename B, typename C, typename D, typename E, typename F, typename G, typename H, typename I, typename J
 #define NATIVE_HOOK_NAME       NativeHook10
@@ -406,11 +421,11 @@ class NativeHook<RET()> : public NativeHook0<RET> { protected: static unsigned i
 #define NATIVE_HOOK_NUMBER     10
 #include "NativeHookImpl.hpp"
 #undef NATIVE_HOOK_NUMBER
-#undef NATIVE_HOOK_TEMPLATE
-#undef NATIVE_HOOK_NAME
-#undef NATIVE_HOOK_TYPES
-#undef NATIVE_HOOK_PARAMETERS
 #undef NATIVE_HOOK_CALLING
+#undef NATIVE_HOOK_PARAMETERS
+#undef NATIVE_HOOK_TYPES
+#undef NATIVE_HOOK_NAME
+#undef NATIVE_HOOK_TEMPLATE
 
 #define NATIVE_HOOK_TEMPLATE   typename A, typename B, typename C, typename D, typename E, typename F, typename G, typename H, typename I, typename J, typename K
 #define NATIVE_HOOK_NAME       NativeHook11
@@ -420,11 +435,11 @@ class NativeHook<RET()> : public NativeHook0<RET> { protected: static unsigned i
 #define NATIVE_HOOK_NUMBER     11
 #include "NativeHookImpl.hpp"
 #undef NATIVE_HOOK_NUMBER
-#undef NATIVE_HOOK_TEMPLATE
-#undef NATIVE_HOOK_NAME
-#undef NATIVE_HOOK_TYPES
-#undef NATIVE_HOOK_PARAMETERS
 #undef NATIVE_HOOK_CALLING
+#undef NATIVE_HOOK_PARAMETERS
+#undef NATIVE_HOOK_TYPES
+#undef NATIVE_HOOK_NAME
+#undef NATIVE_HOOK_TEMPLATE
 
 #define NATIVE_HOOK_TEMPLATE   typename A, typename B, typename C, typename D, typename E, typename F, typename G, typename H, typename I, typename J, typename K, typename L
 #define NATIVE_HOOK_NAME       NativeHook12
@@ -434,11 +449,11 @@ class NativeHook<RET()> : public NativeHook0<RET> { protected: static unsigned i
 #define NATIVE_HOOK_NUMBER     12
 #include "NativeHookImpl.hpp"
 #undef NATIVE_HOOK_NUMBER
-#undef NATIVE_HOOK_TEMPLATE
-#undef NATIVE_HOOK_NAME
-#undef NATIVE_HOOK_TYPES
-#undef NATIVE_HOOK_PARAMETERS
 #undef NATIVE_HOOK_CALLING
+#undef NATIVE_HOOK_PARAMETERS
+#undef NATIVE_HOOK_TYPES
+#undef NATIVE_HOOK_NAME
+#undef NATIVE_HOOK_TEMPLATE
 
 #define NATIVE_HOOK_TEMPLATE   typename A, typename B, typename C, typename D, typename E, typename F, typename G, typename H, typename I, typename J, typename K, typename L, typename M
 #define NATIVE_HOOK_NAME       NativeHook13
@@ -448,11 +463,11 @@ class NativeHook<RET()> : public NativeHook0<RET> { protected: static unsigned i
 #define NATIVE_HOOK_NUMBER     13
 #include "NativeHookImpl.hpp"
 #undef NATIVE_HOOK_NUMBER
-#undef NATIVE_HOOK_TEMPLATE
-#undef NATIVE_HOOK_NAME
-#undef NATIVE_HOOK_TYPES
-#undef NATIVE_HOOK_PARAMETERS
 #undef NATIVE_HOOK_CALLING
+#undef NATIVE_HOOK_PARAMETERS
+#undef NATIVE_HOOK_TYPES
+#undef NATIVE_HOOK_NAME
+#undef NATIVE_HOOK_TEMPLATE
 
 #define NATIVE_HOOK_TEMPLATE   typename A, typename B, typename C, typename D, typename E, typename F, typename G, typename H, typename I, typename J, typename K, typename L, typename M, typename N
 #define NATIVE_HOOK_NAME       NativeHook14
@@ -462,11 +477,11 @@ class NativeHook<RET()> : public NativeHook0<RET> { protected: static unsigned i
 #define NATIVE_HOOK_NUMBER     14
 #include "NativeHookImpl.hpp"
 #undef NATIVE_HOOK_NUMBER
-#undef NATIVE_HOOK_TEMPLATE
-#undef NATIVE_HOOK_NAME
-#undef NATIVE_HOOK_TYPES
-#undef NATIVE_HOOK_PARAMETERS
 #undef NATIVE_HOOK_CALLING
+#undef NATIVE_HOOK_PARAMETERS
+#undef NATIVE_HOOK_TYPES
+#undef NATIVE_HOOK_NAME
+#undef NATIVE_HOOK_TEMPLATE
 
 #define NATIVE_HOOK_TEMPLATE   typename A, typename B, typename C, typename D, typename E, typename F, typename G, typename H, typename I, typename J, typename K, typename L, typename M, typename N, typename O
 #define NATIVE_HOOK_NAME       NativeHook15
@@ -476,11 +491,11 @@ class NativeHook<RET()> : public NativeHook0<RET> { protected: static unsigned i
 #define NATIVE_HOOK_NUMBER     15
 #include "NativeHookImpl.hpp"
 #undef NATIVE_HOOK_NUMBER
-#undef NATIVE_HOOK_TEMPLATE
-#undef NATIVE_HOOK_NAME
-#undef NATIVE_HOOK_TYPES
-#undef NATIVE_HOOK_PARAMETERS
 #undef NATIVE_HOOK_CALLING
+#undef NATIVE_HOOK_PARAMETERS
+#undef NATIVE_HOOK_TYPES
+#undef NATIVE_HOOK_NAME
+#undef NATIVE_HOOK_TEMPLATE
 
 #define NATIVE_HOOK_TEMPLATE   typename A, typename B, typename C, typename D, typename E, typename F, typename G, typename H, typename I, typename J, typename K, typename L, typename M, typename N, typename O, typename P
 #define NATIVE_HOOK_NAME       NativeHook16
@@ -490,30 +505,36 @@ class NativeHook<RET()> : public NativeHook0<RET> { protected: static unsigned i
 #define NATIVE_HOOK_NUMBER     16
 #include "NativeHookImpl.hpp"
 #undef NATIVE_HOOK_NUMBER
-#undef NATIVE_HOOK_TEMPLATE
-#undef NATIVE_HOOK_NAME
-#undef NATIVE_HOOK_TYPES
-#undef NATIVE_HOOK_PARAMETERS
 #undef NATIVE_HOOK_CALLING
+#undef NATIVE_HOOK_PARAMETERS
+#undef NATIVE_HOOK_TYPES
+#undef NATIVE_HOOK_NAME
+#undef NATIVE_HOOK_TEMPLATE
 
 // The hooks and calls for each class are always static, because otherwise it
 // would make installing hooks MUCH harder - we would need stubs that could
 // handle class pointers.  Doing that would negate needing a different class
 // for every hook type, even when the parameters are the same, but this was is
 // probably not much more generated code, and vastly simpler.
+// 
+// The inheritance from `NativeHookBase` is protected, because we don't want
+// normal users getting in to that data.  However, we do want them to be able to
+// use the common `IsEnabled` method, so re-export it.
 #define HOOK(func,type) \
-	class CHook_##func : public NativeHook<type>                                \
+	extern class CHook_##func : public NativeHook<type>                         \
 	{                                                                           \
 	public:                                                                     \
 		CHook_##func() :                                                        \
 			NativeHook<type>(#func, &sampgdk_##func, &PreDo) {}                 \
+                                                                                \
+		using NativeHookBase::IsEnabled();                                      \
                                                                                 \
 	private:                                                                    \
 		static cell PreDo(AMX * amx, cell * params)                             \
 		{                                                                       \
 			try                                                                 \
 			{                                                                   \
-				return impl_.CallDoOuter(NativeHook<type>::PARAMS, amx, params);\
+				return FIXES_##func.CallDoOuter(NativeHook<type>::PARAMS, amx, params); \
 			}                                                                   \
 			catch (std::exception & e)                                          \
 			{                                                                   \
@@ -523,11 +544,8 @@ class NativeHook<RET()> : public NativeHook0<RET> { protected: static unsigned i
 			return 0;                                                           \
 		}                                                                       \
                                                                                 \
-		HOOK_TYPE_WITHOUT_PARAMS_##type Do HOOK_TYPE_WITHOUT_RETURN_##type;     \
-                                                                                \
-		static CHook_##func                                                     \
-			impl_;                                                              \
-	}
+		HOOK_TYPE_WITHOUT_PARAMS_##type Do HOOK_TYPE_WITHOUT_RETURN_##type const; \
+	} FIXES_##func;                                                             \
 
 #if 0
 
@@ -535,11 +553,12 @@ class NativeHook<RET()> : public NativeHook0<RET> { protected: static unsigned i
 
 // In the NATIVES.hpp header:
 #undef  SetPlayerPos
-HOOK(SetPlayerPos, bool(int, float, float, float));
-#define SetPlayerPos hooked_SetPlayerPos
+HOOK(SetPlayerPos, bool(int playerid, float x, float y, float z));
+#define SetPlayerPos FIXES_SetPlayerPos
+#define BAD_SetPlayerPos *FIXES_SetPlayerPos
 
 // In your code:
-HOOK(SetPlayerPos, cell(AMX * amx, cell * params))
+HOOK(SetPlayerPos, bool(int playerid, float x, float y, float z))
 {
 	// Implementation here...
 }
@@ -551,6 +570,6 @@ HOOK(SetPlayerPos, cell(AMX * amx, cell * params))
 #undef HOOK
 
 #define HOOK(func,type) \
-	CHook_##func CHook_##func::impl_;                                          \
-	HOOK_TYPE_WITHOUT_PARAMS_##type CHook_##func::Do HOOK_TYPE_WITHOUT_RETURN_##type
+	CHook_##func FIXES_##func;                                                  \
+	HOOK_TYPE_WITHOUT_PARAMS_##type CHook_##func::Do HOOK_TYPE_WITHOUT_RETURN_##type const
 

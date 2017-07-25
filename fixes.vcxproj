@@ -180,6 +180,7 @@
     <ClCompile Include="dependencies\samp-plugin-sdk\amxplugin.cpp" />
     <ClCompile Include="dependencies\samp-plugin-sdk\amxplugin2.cpp" />
     <ClCompile Include="dependencies\subhook\subhook.c" />
+    <ClCompile Include="fixes\SetPlayerPos.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>

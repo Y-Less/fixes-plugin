@@ -9,7 +9,7 @@
 #define DEFINE_FIX(name,comments) \
 	DeclaredFix<FIXES_CHECK_DEFINED_(name)> const FIX_##name##_(fix_description_s {} comments )
 
-#include "main.h"
+#include "main.hpp"
 
 extern void *
 	pAMXFunctions;
@@ -30,6 +30,8 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void **ppData) {
 	logprintf = (logprintf_t)ppData[PLUGIN_DATA_LOGPRINTF];
 	samplog::Init();
 	Log.SetLogLevel(LogLevel::DEBUG | LogLevel::ERROR | LogLevel::INFO | LogLevel::WARNING);
+	if (SetPlayerPos.IsEnabled())
+		SetPlayerPos(0, 0, 0, 0);
 	return sampgdk::Load(ppData);
 }
 
