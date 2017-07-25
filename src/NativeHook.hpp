@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdexcept>
+#include <list>
 
 #include <subhook/subhook.h>
 #include <sampgdk/a_samp.h>
@@ -23,6 +24,11 @@
 #define HOOK_TYPE_WITHOUT_RETURN_bool(...)  (__VA_ARGS__)
 #define HOOK_TYPE_WITHOUT_RETURN_void(...)  (__VA_ARGS__)
 #define HOOK_TYPE_WITHOUT_RETURN_cell(...)  (__VA_ARGS__)
+
+class NativeHookBase;
+
+extern std::list<NativeHookBase *> *
+	gAllHooks;
 
 class NativeHookBase
 {
@@ -51,7 +57,20 @@ public:
 protected:
 	typedef cell (*hooked_t)(AMX *, cell *);
 
-	NativeHookBase(char const * const name, hooked_t hooked) : name_(name), hooked_(hooked), hook_(), amx_(0), params_(0) {}
+	NativeHookBase(char const * const name, hooked_t hooked)
+	:
+		name_(name),
+		hooked_(hooked),
+		hook_(),
+		amx_(0),
+		params_(0)
+	{
+		if (!gAllHooks)
+			gAllHooks = new std::list<NativeHookBase *>();
+		if (gAllHooks)
+			gAllHooks->push_back(this);
+	}
+	
 	~NativeHookBase() = default;
 
 	subhook::Hook & GetHook() { return hook_; }
@@ -73,8 +92,6 @@ protected:
 			amx_ = amx;
 			params_ = params;
 			ret = this->CallDoInner(amx, params);
-			params_ = 0;
-			amx_ = 0;
 		}
 		return (cell)ret;
 	}

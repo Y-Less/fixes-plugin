@@ -21,6 +21,9 @@ logprintf_t
 samplog::CPluginLogger
 	Log("fixes-plugin");
 
+std::list<NativeHookBase *> *
+	gAllHooks = 0;
+
 PLUGIN_EXPORT unsigned int PLUGIN_CALL Supports() {
 	return sampgdk::Supports() | SUPPORTS_AMX_NATIVES | SUPPORTS_PROCESS_TICK;
 }
@@ -30,8 +33,13 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void **ppData) {
 	logprintf = (logprintf_t)ppData[PLUGIN_DATA_LOGPRINTF];
 	samplog::Init();
 	Log.SetLogLevel(LogLevel::DEBUG | LogLevel::ERROR | LogLevel::INFO | LogLevel::WARNING);
-	if (SetPlayerPos.IsEnabled())
-		SetPlayerPos(0, 0, 0, 0);
+	if (gAllHooks)
+	{
+		for (NativeHookBase * hook : *gAllHooks)
+		{
+
+		}
+	}
 	return sampgdk::Load(ppData);
 }
 
