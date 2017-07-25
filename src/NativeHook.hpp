@@ -8,14 +8,12 @@
 #include <sampgdk/a_actor.h>
 #include <sampgdk/a_http.h>
 
-#define HOOK_TYPE_WITHOUT_PARAMS_void(...)  void
 #define HOOK_TYPE_WITHOUT_PARAMS_int(...)   int
 #define HOOK_TYPE_WITHOUT_PARAMS_float(...) float
 #define HOOK_TYPE_WITHOUT_PARAMS_bool(...)  bool
 #define HOOK_TYPE_WITHOUT_PARAMS_void(...)  void
 #define HOOK_TYPE_WITHOUT_PARAMS_cell(...)  cell
 
-#define HOOK_TYPE_WITHOUT_RETURN_void(...)  (__VA_ARGS__)
 #define HOOK_TYPE_WITHOUT_RETURN_int(...)   (__VA_ARGS__)
 #define HOOK_TYPE_WITHOUT_RETURN_float(...) (__VA_ARGS__)
 #define HOOK_TYPE_WITHOUT_RETURN_bool(...)  (__VA_ARGS__)
