@@ -23,3 +23,7 @@ extern logprintf_t
 // Include all the hooked natives.
 #include "src/NativeHook.hpp"
 
+using namespace samp_natives;
+
+#include "../NATIVES.hpp"
+

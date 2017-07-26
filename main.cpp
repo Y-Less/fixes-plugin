@@ -22,6 +22,7 @@ samplog::CPluginLogger
 	Log("fixes-plugin");
 
 std::list<NativeHookBase *> *
+	samp_natives::
 	gAllHooks = 0;
 
 PLUGIN_EXPORT unsigned int PLUGIN_CALL Supports() {

@@ -3,7 +3,7 @@
 #define _FIXES_WEAPON_SLOTS                     (13)
 
 // In your code:
-HOOK(SetPlayerPos, bool(int playerid, float x, float y, float z))
+HOOK_DECL(SetPlayerPos, bool(int playerid, float x, float y, float z))
 {
 	int
 		ret = SetPlayerPos(playerid, x, y, z),
