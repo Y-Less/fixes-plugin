@@ -44,25 +44,25 @@ namespace samp_natives
 				ParamCast<I> i(amx, params, 9);
 			#endif
 			#if NATIVE_HOOK_NUMBER >= 10
-				ParamCast<J> j(amx, params, 0);
+				ParamCast<J> j(amx, params, 10);
 			#endif
 			#if NATIVE_HOOK_NUMBER >= 11
-				ParamCast<K> k(amx, params, 1);
+				ParamCast<K> k(amx, params, 11);
 			#endif
 			#if NATIVE_HOOK_NUMBER >= 12
-				ParamCast<L> l(amx, params, 2);
+				ParamCast<L> l(amx, params, 12);
 			#endif
 			#if NATIVE_HOOK_NUMBER >= 13
-				ParamCast<M> m(amx, params, 3);
+				ParamCast<M> m(amx, params, 13);
 			#endif
 			#if NATIVE_HOOK_NUMBER >= 14
-				ParamCast<N> n(amx, params, 4);
+				ParamCast<N> n(amx, params, 14);
 			#endif
 			#if NATIVE_HOOK_NUMBER >= 15
-				ParamCast<O> o(amx, params, 5);
+				ParamCast<O> o(amx, params, 15);
 			#endif
 			#if NATIVE_HOOK_NUMBER >= 16
-				ParamCast<P> p(amx, params, 6);
+				ParamCast<P> p(amx, params, 16);
 			#endif
 				RET
 					ret = this->Do(NATIVE_HOOK_CALLING);
@@ -116,25 +116,25 @@ namespace samp_natives
 				ParamCast<I> i(amx, params, 9);
 			#endif
 			#if NATIVE_HOOK_NUMBER >= 10
-				ParamCast<J> j(amx, params, 0);
+				ParamCast<J> j(amx, params, 10);
 			#endif
 			#if NATIVE_HOOK_NUMBER >= 11
-				ParamCast<K> k(amx, params, 1);
+				ParamCast<K> k(amx, params, 11);
 			#endif
 			#if NATIVE_HOOK_NUMBER >= 12
-				ParamCast<L> l(amx, params, 2);
+				ParamCast<L> l(amx, params, 12);
 			#endif
 			#if NATIVE_HOOK_NUMBER >= 13
-				ParamCast<M> m(amx, params, 3);
+				ParamCast<M> m(amx, params, 13);
 			#endif
 			#if NATIVE_HOOK_NUMBER >= 14
-				ParamCast<N> n(amx, params, 4);
+				ParamCast<N> n(amx, params, 14);
 			#endif
 			#if NATIVE_HOOK_NUMBER >= 15
-				ParamCast<O> o(amx, params, 5);
+				ParamCast<O> o(amx, params, 15);
 			#endif
 			#if NATIVE_HOOK_NUMBER >= 16
-				ParamCast<P> p(amx, params, 6);
+				ParamCast<P> p(amx, params, 16);
 			#endif
 				this->Do(NATIVE_HOOK_CALLING);
 				return 1;

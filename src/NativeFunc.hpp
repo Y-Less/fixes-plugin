@@ -1,9 +1,10 @@
 #pragma once
 
+#include <stdexcept>
 #include <list>
 
-#include "ParamCast.hpp"
 #include "PreprocFuncGen.hpp"
+#include "ParamCast.hpp"
 
 namespace samp_natives
 {
@@ -377,44 +378,68 @@ namespace samp_natives
 
 // The hooks and calls for each class are always static, because otherwise it
 // would make installing hooks MUCH harder - we would need stubs that could
-// handle class pointers.  Doing that would negate needing a different class
-// for every hook type, even when the parameters are the same, but this was is
+// handle class pointers.  Doing that would negate needing a different class for
+// every hook type, even when the parameters are the same, but this way is
 // probably not much more generated code, and vastly simpler.
 // 
 // The inheritance from `NativeFuncBase` is protected, because we don't want
 // normal users getting in to that data.  However, we do want them to be able to
 // use the common `IsEnabled` method, so re-export it.
 #define NATIVE_DEFN(func,type) \
-	extern class CFunc_##func : public NativeFunc<type>                         \
+	extern "C" SAMP_NATIVES_RETURN(type) AMX_NATIVE_CALL  \
+		NATIVE_##func SAMP_NATIVES_WITHOUT_RETURN_##type ;                      \
+                                                                                \
+	namespace samp_natives                                                      \
 	{                                                                           \
-	public:                                                                     \
-		CFunc_##func() :                                                        \
-			NativeFunc<type>(#func, &PreDo) {}                                  \
-                                                                                \
-		using NativeFuncBase::IsEnabled();                                      \
-                                                                                \
-	private:                                                                    \
-		extern "C" friend static cell AMX_NATIVE_CALL                           \
-			PreDo(AMX * amx, cell * params)                                     \
+		extern class Native_##func : public NativeFunc<type>                    \
 		{                                                                       \
-			return func.CallDoOuter(amx, params);                               \
-		}                                                                       \
+		public:                                                                 \
+			Native_##func() :                                                   \
+				NativeFunc<type>(#func, &Call) {}                               \
                                                                                 \
-		SAMP_NATIVES_WITHOUT_PARAMS_##type                                         \
-			Do SAMP_NATIVES_WITHOUT_RETURN_##type const;                           \
-	} func;                                                                     \
-	SAMP_NATIVES_WITHOUT_PARAMS_##type                                             \
-		CFunc_##func::                                                          \
-		Do SAMP_NATIVES_WITHOUT_RETURN_##type const
+		private:                                                                \
+			friend SAMP_NATIVES_RETURN(type) AMX_NATIVE_CALL                    \
+				::NATIVE_##func SAMP_NATIVES_WITHOUT_RETURN_##type ;            \
+                                                                                \
+			static cell AMX_NATIVE_CALL                                         \
+				Call(AMX * amx, cell * params)                                  \
+			{                                                                   \
+				return ::samp_natives::func.CallDoOuter(amx, params);           \
+			}                                                                   \
+                                                                                \
+			SAMP_NATIVES_RETURN(type)                                           \
+				Do SAMP_NATIVES_WITHOUT_RETURN_##type const;                    \
+		} func;                                                                 \
+	}
 
 #if 0
 
 // Example:
 
-NATIVE(SetPlayerPos, bool(int playerid, float x, float y, float z))
+// In you header:
+NATIVE_DEFN(SetPlayerPosAndAngle, bool(int playerid, float x, float y, float z, float a));
+
+// In your code:
+NATIVE_DECL(SetPlayerPosAndAngle, bool(int playerid, float x, float y, float z, float a))
 {
 	// Implementation here...
+	SetPlayerPos(playerid, x, y, z);
+	return SetPlayerFacingAngle(playerid, a);
 }
 
 #endif
+
+#define NATIVE_DECL(func,type) \
+	extern "C" SAMP_NATIVES_RETURN(type) AMX_NATIVE_CALL                        \
+		NATIVE_##func(SAMP_NATIVES_PARAMETERS(type))                            \
+	{                                                                           \
+		__pragma(comment(linker, "/EXPORT:"#func"=_NATIVE_"#func));             \
+		SAMP_NATIVES_MAYBE_RETURN(type)                                         \
+			::samp_natives::func.Do(SAMP_NATIVES_CALLING(type));                \
+	}                                                                           \
+                                                                                \
+	samp_natives::Native_##func samp_natives::func;                             \
+	SAMP_NATIVES_RETURN(type)                                                   \
+		samp_natives::Native_##func::                                           \
+		Do SAMP_NATIVES_WITHOUT_RETURN_##type const
 

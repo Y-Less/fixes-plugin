@@ -577,26 +577,25 @@ namespace samp_natives
 
 // Example:
 
-// In the NATIVES.hpp header:
+// In you header:
 #undef SetPlayerPos
 HOOK_DEFN(SetPlayerPos, bool(int playerid, float x, float y, float z));
-//#define SetPlayerPos FIXES_SetPlayerPos
-//#define BAD_SetPlayerPos *FIXES_SetPlayerPos
 
 // In your code:
 HOOK_DECL(SetPlayerPos, bool(int playerid, float x, float y, float z))
 {
 	// Implementation here...
+	gLastX[playerid] = x;
+	gLastY[playerid] = y;
+	// No need to worry about hooks for this function - they are removed while
+	// the hook is running.
+	return SetPlayerPos(playerid, x, y, z);
 }
 
 #endif
 
-//#include "../NATIVES.hpp"
-
-//#undef HOOK
-
 #define HOOK_DECL(func,type) \
-	extern "C" SAMP_NATIVES_RETURN(type) AMX_NATIVE_CALL  \
+	extern "C" SAMP_NATIVES_RETURN(type) AMX_NATIVE_CALL                        \
 		NATIVE_##func(SAMP_NATIVES_PARAMETERS(type))                            \
 	{                                                                           \
 		__pragma(comment(linker, "/EXPORT:"#func"=_NATIVE_"#func));             \
