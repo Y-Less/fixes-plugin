@@ -33,11 +33,20 @@ namespace plugin_natives
 
 		bool IsEnabled() const
 		{
-			hook_.IsInstalled();
+			return hook_.IsInstalled();
 		}
 
 	protected:
 		typedef cell (*AMX_NATIVE)(AMX *, cell *);
+
+		bool Recursing()
+		{
+			// Get if we are already in the native, and then flip it.
+			bool
+				ret = recursing_;
+			recursing_ = !ret;
+			return ret;
+		}
 
 		NativeHookBase(unsigned int count, char const * const name, AMX_NATIVE replacement)
 		:
@@ -46,7 +55,8 @@ namespace plugin_natives
 			replacement_(replacement),
 			hook_(),
 			amx_(0),
-			params_(0)
+			params_(0),
+			recursing_(false)
 		{
 			if (!all_)
 				all_ = new std::list<NativeHookBase *>();
@@ -70,6 +80,7 @@ namespace plugin_natives
 				// Check that there are enough parameters.
 				amx_ = amx;
 				params_ = params;
+				recursing_ = true;
 				try
 				{
 					if (count_ > (unsigned int)params[0])
@@ -82,9 +93,21 @@ namespace plugin_natives
 				{
 					char
 						msg[1024];
-					sprintf(msg, "Exception thrown in %s: \"%s\"", name_, e.what());
+					sprintf(msg, "Exception in %s: \"%s\"", name_, e.what());
 					Log(LogLevel::ERROR, msg);
 				}
+				catch (...)
+				{
+					char
+						msg[1024];
+					sprintf(msg, "Unknown exception in in %s", name_);
+					Log(LogLevel::ERROR, msg);
+					recursing_ = false;
+					params_ = 0;
+					amx_ = 0;
+					throw;
+				}
+				recursing_ = false;
 				params_ = 0;
 				amx_ = 0;
 			}
@@ -119,6 +142,9 @@ namespace plugin_natives
 
 		cell *
 			params_;
+
+		bool
+			recursing_;
 
 		static std::list<NativeHookBase *> *
 			all_;
@@ -187,7 +213,20 @@ namespace plugin_natives
 
 		inline RET operator()()
 		{
-			return Do();
+			RET
+				ret;
+			if (Recursing())
+			{
+				subhook::ScopedHookRemove
+					undo(&GetHook());
+				ret = original_();
+			}
+			else
+			{
+				ret = Do();
+			}
+			Recursing();
+			return ret;
 		}
 
 		ScopedCall operator*()
@@ -275,7 +314,17 @@ namespace plugin_natives
 
 		inline void operator()()
 		{
-			Do();
+			if (Recursing())
+			{
+				subhook::ScopedHookRemove
+					undo(&GetHook());
+				original_();
+			}
+			else
+			{
+				Do();
+			}
+			Recursing();
 		}
 
 		ScopedCall operator*()
@@ -602,13 +651,46 @@ HOOK_DECL(SetPlayerPos, bool(int playerid, float x, float y, float z))
 
 #endif
 
+// We can't pass exceptions to another module easily, so just don't...
+// 
+// I quite like this:
+//   
+//   SAMP_NATIVES_MAYBE_RETURN(type) {};
+//   
+// If there is a return type, it will compile as:
+//   
+//   return {};
+//   
+// Which means "return default value" in new C++ versions.  If there is no
+// return type (void), it will compile as:
+//   
+//   {};
+//   
+// Which means nothing.
 #define HOOK_DECL(func,type) \
 	extern "C" SAMP_NATIVES_RETURN(type) _cdecl                                 \
 	    NATIVE_##func(SAMP_NATIVES_PARAMETERS(type))                            \
 	{                                                                           \
-	    __pragma(comment(linker, "/EXPORT:_"#func"=_NATIVE_"#func));            \
-	    SAMP_NATIVES_MAYBE_RETURN(type)                                         \
-	        ::plugin_natives::func.Do(SAMP_NATIVES_CALLING(type));              \
+	    __pragma(comment(linker, "/EXPORT:_" #func "=_NATIVE_" #func));         \
+	    try                                                                     \
+	    {                                                                       \
+	        SAMP_NATIVES_MAYBE_RETURN(type)                                     \
+	            ::plugin_natives::func(SAMP_NATIVES_CALLING(type));             \
+	    }                                                                       \
+	    catch (std::exception & e)                                              \
+	    {                                                                       \
+	        char                                                                \
+	            msg[1024];                                                      \
+	        sprintf(msg, "Exception in _" #func ": \"%s\"", e.what());          \
+	        Log(LogLevel::ERROR, msg);                                          \
+	    }                                                                       \
+	    catch (...)                                                             \
+	    {                                                                       \
+	        Log(LogLevel::ERROR, "Unknown exception in _" #func);               \
+	    }                                                                       \
+	    if (!::plugin_natives::func.Recursing())                                \
+	        ::plugin_natives::func.Recursing();                                 \
+	    SAMP_NATIVES_MAYBE_RETURN(type) {};                                     \
 	}                                                                           \
 	                                                                            \
 	plugin_natives::Native_##func plugin_natives::func;                         \

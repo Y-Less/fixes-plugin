@@ -58,8 +58,18 @@ namespace plugin_natives
 				{
 					char
 						msg[1024];
-					sprintf(msg, "Exception thrown in %s: \"%s\"", name_, e.what());
+					sprintf(msg, "Exception in %s: \"%s\"", name_, e.what());
 					Log(LogLevel::ERROR, msg);
+				}
+				catch (...)
+				{
+					char
+						msg[1024];
+					sprintf(msg, "Unknown exception in in %s", name_);
+					Log(LogLevel::ERROR, msg);
+					params_ = 0;
+					amx_ = 0;
+					throw;
 				}
 				params_ = 0;
 				amx_ = 0;
@@ -457,13 +467,44 @@ NATIVE_DECL(SetPlayerPosAndAngle, bool(int playerid, float x, float y, float z, 
 
 #endif
 
+// We can't pass exceptions to another module easily, so just don't...
+// 
+// I quite like this:
+//   
+//   SAMP_NATIVES_MAYBE_RETURN(type) {};
+//   
+// If there is a return type, it will compile as:
+//   
+//   return {};
+//   
+// Which means "return default value" in new C++ versions.  If there is no
+// return type (void), it will compile as:
+//   
+//   {};
+//   
+// Which means nothing.
 #define NATIVE_DECL(func,type) \
 	extern "C" SAMP_NATIVES_RETURN(type) _cdecl                                 \
 	    NATIVE_##func(SAMP_NATIVES_PARAMETERS(type))                            \
 	{                                                                           \
-	    __pragma(comment(linker, "/EXPORT:_"#func"=_NATIVE_"#func));            \
-	    SAMP_NATIVES_MAYBE_RETURN(type)                                         \
-	        ::plugin_natives::func.Do(SAMP_NATIVES_CALLING(type));              \
+	    __pragma(comment(linker, "/EXPORT:_" #func "=_NATIVE_" #func));         \
+	    try                                                                     \
+	    {                                                                       \
+	        SAMP_NATIVES_MAYBE_RETURN(type)                                     \
+	            ::plugin_natives::func.Do(SAMP_NATIVES_CALLING(type));          \
+	    }                                                                       \
+	    catch (std::exception & e)                                              \
+	    {                                                                       \
+	        char                                                                \
+	            msg[1024];                                                      \
+	        sprintf(msg, "Exception in _" #func ": \"%s\"", e.what());          \
+	        Log(LogLevel::ERROR, msg);                                          \
+	    }                                                                       \
+	    catch (...)                                                             \
+	    {                                                                       \
+	        Log(LogLevel::ERROR, "Unknown exception in _" #func);               \
+	    }                                                                       \
+	    SAMP_NATIVES_MAYBE_RETURN(type) {};                                     \
 	}                                                                           \
                                                                                 \
 	plugin_natives::Native_##func plugin_natives::func;                         \

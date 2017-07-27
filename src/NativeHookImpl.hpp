@@ -59,7 +59,20 @@ namespace plugin_natives
 
 		inline RET operator()(NATIVE_HOOK_PARAMETERS)
 		{
-			return Do(NATIVE_HOOK_CALLING);
+			RET
+				ret;
+			if (Recursing())
+			{
+				subhook::ScopedHookRemove
+					undo(&GetHook());
+				ret = original_(NATIVE_HOOK_CALLING);
+			}
+			else
+			{
+				ret = Do(NATIVE_HOOK_CALLING);
+			}
+			Recursing();
+			return ret;
 		}
 
 		ScopedCall operator*() const
@@ -194,7 +207,17 @@ namespace plugin_natives
 
 		inline void operator()(NATIVE_HOOK_PARAMETERS)
 		{
-			Do(NATIVE_HOOK_CALLING);
+			if (Recursing())
+			{
+				subhook::ScopedHookRemove
+					undo(&GetHook());
+				original_(NATIVE_HOOK_CALLING);
+			}
+			else
+			{
+				Do(NATIVE_HOOK_CALLING);
+			}
+			Recursing();
 		}
 
 		ScopedCall operator*() const

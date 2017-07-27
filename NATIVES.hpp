@@ -21,7 +21,6 @@
 //using namespace sampgdk;
 using namespace plugin_natives;
 
-#undef  SetPlayerPos
+#undef SetPlayerPos
 HOOK_DEFN(SetPlayerPos, bool(int playerid, float x, float y, float z));
-#define BAD_SetPlayerPos *SetPlayerPos
 

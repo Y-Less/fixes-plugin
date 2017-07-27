@@ -32,6 +32,7 @@ NATIVE_DEFN(SetPlayerPosAndAngle, bool(int playerid, float x, float y, float z, 
 NATIVE_DECL(SetPlayerPosAndAngle, bool(int playerid, float x, float y, float z, float a))
 {
 	// Implementation here...
+	//(*SetPlayerPos)(playerid, x, y, z);
 	SetPlayerPos(playerid, x, y, z);
 	return SetPlayerFacingAngle(playerid, a);
 }
