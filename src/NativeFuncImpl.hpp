@@ -1,7 +1,7 @@
 namespace plugin_natives
 {
 	template <typename RET, NATIVE_HOOK_TEMPLATE>
-	class NATIVE_HOOK_NAME : protected NativeHookBase
+	class NATIVE_HOOK_NAME : protected NativeFuncBase
 	{
 	public:
 		inline RET operator()(NATIVE_HOOK_PARAMETERS)
@@ -10,7 +10,7 @@ namespace plugin_natives
 		}
 
 	protected:
-		NATIVE_HOOK_NAME(char const * const name, AMX_NATIVE native) : NativeHookBase(NATIVE_HOOK_NUMBER, name, native) {}
+		NATIVE_HOOK_NAME(char const * const name, AMX_NATIVE native) : NativeFuncBase(NATIVE_HOOK_NUMBER, name, native) {}
 		~NATIVE_HOOK_NAME() = default;
 
 	private:
@@ -73,7 +73,7 @@ namespace plugin_natives
 	};
 
 	template <NATIVE_HOOK_TEMPLATE>
-	class NATIVE_HOOK_NAME<void, NATIVE_HOOK_TYPES> : protected NativeHookBase
+	class NATIVE_HOOK_NAME<void, NATIVE_HOOK_TYPES> : protected NativeFuncBase
 	{
 	public:
 		inline void operator()(NATIVE_HOOK_PARAMETERS)
@@ -82,7 +82,7 @@ namespace plugin_natives
 		}
 
 	protected:
-		NATIVE_HOOK_NAME(char const * const name, AMX_NATIVE native) : NativeHookBase(NATIVE_HOOK_NUMBER, name, native) {}
+		NATIVE_HOOK_NAME(char const * const name, AMX_NATIVE native) : NativeFuncBase(NATIVE_HOOK_NUMBER, name, native) {}
 		~NATIVE_HOOK_NAME() = default;
 
 	private:
