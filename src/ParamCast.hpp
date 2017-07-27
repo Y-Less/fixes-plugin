@@ -5,8 +5,6 @@
 
 namespace plugin_natives
 {
-	typedef cell AMX_NATIVE_CALL (*native_t)(AMX *, cell *);
-
 	template <typename T>
 	class ParamCast
 	{

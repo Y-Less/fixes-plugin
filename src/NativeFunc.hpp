@@ -8,10 +8,7 @@
 
 namespace plugin_natives
 {
-	class NativeFuncBase;
-
-	extern std::list<NativeFuncBase *> *
-		gAllFuncs;
+	int AmxLoad(AMX * amx);
 
 	class NativeFuncBase
 	{
@@ -23,7 +20,7 @@ namespace plugin_natives
 		}
 
 	protected:
-		NativeFuncBase(unsigned int count, char const * const name, native_t native)
+		NativeFuncBase(unsigned int count, char const * const name, AMX_NATIVE native)
 		:
 			count_(count * sizeof (cell)),
 			name_(name),
@@ -31,10 +28,10 @@ namespace plugin_natives
 			amx_(0),
 			params_(0)
 		{
-			if (!gAllFuncs)
-				gAllFuncs = new std::list<NativeFuncBase *>();
-			if (gAllFuncs)
-				gAllFuncs->push_back(this);
+			if (!all_)
+				all_ = new std::list<NativeFuncBase *>();
+			if (all_)
+				all_->push_back(this);
 		}
 		
 		~NativeFuncBase() = default;
@@ -73,6 +70,8 @@ namespace plugin_natives
 	private:
 		virtual cell CallDoInner(AMX *, cell *) = 0;
 
+		friend int AmxLoad(AMX * amx);
+
 		NativeFuncBase() = delete;
 		NativeFuncBase(NativeFuncBase const &) = delete;
 		NativeFuncBase(NativeFuncBase const &&) = delete;
@@ -85,7 +84,7 @@ namespace plugin_natives
 		char const * const
 			name_;
 
-		native_t const
+		AMX_NATIVE const
 			native_;
 
 		AMX *
@@ -93,6 +92,9 @@ namespace plugin_natives
 
 		cell *
 			params_;
+
+		static std::list<NativeFuncBase *> *
+			all_;
 	};
 
 	template <typename FUNC_TYPE>
@@ -109,7 +111,7 @@ namespace plugin_natives
 		}
 
 	protected:
-		NativeFunc0(char const * const name, native_t native) : NativeFuncBase(0, name, native) {}
+		NativeFunc0(char const * const name, AMX_NATIVE native) : NativeFuncBase(0, name, native) {}
 		~NativeFunc0() = default;
 
 	private:
@@ -134,7 +136,7 @@ namespace plugin_natives
 		}
 
 	protected:
-		NativeFunc0(char const * const name, native_t native) : NativeFuncBase(0, name, native) {}
+		NativeFunc0(char const * const name, AMX_NATIVE native) : NativeFuncBase(0, name, native) {}
 		~NativeFunc0() = default;
 
 	private:
@@ -148,8 +150,34 @@ namespace plugin_natives
 	};
 
 	template <typename RET>
-	class NativeFunc<RET()> : public NativeFunc0<RET> { protected: NativeFunc(char const * const name, native_t native) : NativeFunc0(name, native) {} };
+	class NativeFunc<RET()> : public NativeFunc0<RET> { protected: NativeFunc(char const * const name, AMX_NATIVE native) : NativeFunc0(name, native) {} };
 };
+
+#if defined PLUGIN_NATIVES_STORAGE
+namespace plugin_natives
+{
+	std::list<NativeFuncBase *> *
+		NativeFuncBase::all_;
+
+	int AmxLoad(AMX * amx)
+	{
+		int
+			ret = 0;
+		if (NativeFuncBase::all_)
+		{
+			AMX_NATIVE_INFO
+				curNative;
+			for (NativeFuncBase * curFunc : *NativeFuncBase::all_)
+			{
+				curNative.name = curFunc->name_;
+				curNative.func = curFunc->native_;
+				ret = amx_Register(amx, &curNative, 1);
+			}
+		}
+		return ret;
+	}
+};
+#endif
 
 // Defer declaring the other classes to a super macro file.
 #define NATIVE_HOOK_TEMPLATE   typename A
@@ -416,7 +444,7 @@ namespace plugin_natives
 
 // Example:
 
-// In you header:
+// In your header:
 NATIVE_DEFN(SetPlayerPosAndAngle, bool(int playerid, float x, float y, float z, float a));
 
 // In your code:

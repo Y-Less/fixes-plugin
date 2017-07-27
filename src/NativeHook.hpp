@@ -4,22 +4,13 @@
 #include <list>
 
 #include <subhook/subhook.h>
-#include <sampgdk/a_samp.h>
-#include <sampgdk/a_players.h>
-#include <sampgdk/a_vehicles.h>
-#include <sampgdk/a_objects.h>
-#include <sampgdk/a_actor.h>
-#include <sampgdk/a_http.h>
 
 #include "PreprocFuncGen.hpp"
 #include "ParamCast.hpp"
 
 namespace plugin_natives
 {
-	class NativeHookBase;
-
-	extern std::list<NativeHookBase *> *
-		gAllHooks;
+	void Load(void **ppData);
 
 	class NativeHookBase
 	{
@@ -46,9 +37,9 @@ namespace plugin_natives
 		}
 
 	protected:
-		typedef cell (*native_t)(AMX *, cell *);
+		typedef cell (*AMX_NATIVE)(AMX *, cell *);
 
-		NativeHookBase(unsigned int count, char const * const name, native_t replacement)
+		NativeHookBase(unsigned int count, char const * const name, AMX_NATIVE replacement)
 		:
 			count_(count * sizeof (cell)),
 			name_(name),
@@ -57,12 +48,12 @@ namespace plugin_natives
 			amx_(0),
 			params_(0)
 		{
-			if (!gAllHooks)
-				gAllHooks = new std::list<NativeHookBase *>();
-			if (gAllHooks)
-				gAllHooks->push_back(this);
+			if (!all_)
+				all_ = new std::list<NativeHookBase *>();
+			if (all_)
+				all_->push_back(this);
 		}
-		
+
 		~NativeHookBase() = default;
 
 		subhook::Hook & GetHook() { return hook_; }
@@ -103,6 +94,8 @@ namespace plugin_natives
 	private:
 		virtual cell CallDoInner(AMX *, cell *) = 0;
 
+		friend void Load(void **ppData);
+
 		NativeHookBase() = delete;
 		NativeHookBase(NativeHookBase const &) = delete;
 		NativeHookBase(NativeHookBase const &&) = delete;
@@ -115,7 +108,7 @@ namespace plugin_natives
 		char const * const
 			name_;
 
-		native_t const
+		AMX_NATIVE const
 			replacement_;
 
 		subhook::Hook
@@ -126,6 +119,9 @@ namespace plugin_natives
 
 		cell *
 			params_;
+
+		static std::list<NativeHookBase *> *
+			all_;
 	};
 
 	template <typename FUNC_TYPE>
@@ -202,7 +198,7 @@ namespace plugin_natives
 		}
 
 	protected:
-		NativeHook0(char const * const name, implementation_t original, native_t replacement) : NativeHookBase(0, name, replacement), original_(original) {}
+		NativeHook0(char const * const name, implementation_t original, AMX_NATIVE replacement) : NativeHookBase(0, name, replacement), original_(original) {}
 		~NativeHook0() = default;
 
 	private:
@@ -290,7 +286,7 @@ namespace plugin_natives
 		}
 
 	protected:
-		NativeHook0(char const * const name, implementation_t original, native_t replacement) : NativeHookBase(0, name, replacement), original_(original) {}
+		NativeHook0(char const * const name, implementation_t original, AMX_NATIVE replacement) : NativeHookBase(0, name, replacement), original_(original) {}
 		~NativeHook0() = default;
 
 	private:
@@ -307,8 +303,20 @@ namespace plugin_natives
 	};
 
 	template <typename RET>
-	class NativeHook<RET()> : public NativeHook0<RET> { NativeHook(char const * const name, implementation_t original, native_t replacement) : NativeHook0(name, original, replacement) {} };
+	class NativeHook<RET()> : public NativeHook0<RET> { NativeHook(char const * const name, implementation_t original, AMX_NATIVE replacement) : NativeHook0(name, original, replacement) {} };
 };
+
+#if defined PLUGIN_NATIVES_STORAGE
+namespace plugin_natives
+{
+	std::list<NativeHookBase *> *
+		NativeHookBase::all_;
+
+	void Load(void **ppData)
+	{
+	}
+};
+#endif
 
 // Defer declaring the other classes to a super macro file.
 #define NATIVE_HOOK_TEMPLATE   typename A

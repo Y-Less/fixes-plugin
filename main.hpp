@@ -18,12 +18,7 @@ extern logprintf_t
 #define elemsof(array) (sizeof (array) / sizeof ((array)[0]))
 
 // Include all the `extern` declarations for the fix information.
-#include "src/DeclaredFix.hpp"
+//#include "src/DeclaredFix.hpp"
 
 // Include all the hooked natives.
-#include "src/NativeHook.hpp"
-
-using namespace samp_natives;
-
-#include "../NATIVES.hpp"
 

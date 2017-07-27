@@ -11,6 +11,10 @@
 
 #include "main.hpp"
 
+#define PLUGIN_NATIVES_STORAGE
+
+#include "NATIVES.hpp"
+
 extern void *
 	pAMXFunctions;
 
@@ -21,9 +25,16 @@ logprintf_t
 samplog::CPluginLogger
 	Log("fixes-plugin");
 
-std::list<NativeHookBase *> *
-	samp_natives::
-	gAllHooks = 0;
+// In your header:
+NATIVE_DEFN(SetPlayerPosAndAngle, bool(int playerid, float x, float y, float z, float a));
+
+// In your code:
+NATIVE_DECL(SetPlayerPosAndAngle, bool(int playerid, float x, float y, float z, float a))
+{
+	// Implementation here...
+	SetPlayerPos(playerid, x, y, z);
+	return SetPlayerFacingAngle(playerid, a);
+}
 
 PLUGIN_EXPORT unsigned int PLUGIN_CALL Supports() {
 	return sampgdk::Supports() | SUPPORTS_AMX_NATIVES | SUPPORTS_PROCESS_TICK;
@@ -34,13 +45,7 @@ PLUGIN_EXPORT bool PLUGIN_CALL Load(void **ppData) {
 	logprintf = (logprintf_t)ppData[PLUGIN_DATA_LOGPRINTF];
 	samplog::Init();
 	Log.SetLogLevel(LogLevel::DEBUG | LogLevel::ERROR | LogLevel::INFO | LogLevel::WARNING);
-	if (gAllHooks)
-	{
-		for (NativeHookBase * hook : *gAllHooks)
-		{
-
-		}
-	}
+	plugin_natives::Load(ppData);
 	return sampgdk::Load(ppData);
 }
 
@@ -49,7 +54,7 @@ PLUGIN_EXPORT void PLUGIN_CALL Unload() {
 }
 
 PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX *amx) {
-	return AMX_ERR_NONE;
+	return plugin_natives::AmxLoad(amx);
 }
 
 PLUGIN_EXPORT int PLUGIN_CALL AmxUnload(AMX *amx) {

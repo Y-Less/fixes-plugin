@@ -70,7 +70,7 @@ namespace plugin_natives
 		}
 
 	protected:
-		NATIVE_HOOK_NAME(char const * const name, implementation_t original, native_t replacement) : NativeHookBase(NATIVE_HOOK_NUMBER, name, replacement), original_(original) {}
+		NATIVE_HOOK_NAME(char const * const name, implementation_t original, AMX_NATIVE replacement) : NativeHookBase(NATIVE_HOOK_NUMBER, name, replacement), original_(original) {}
 		~NATIVE_HOOK_NAME() = default;
 
 	private:
@@ -205,7 +205,7 @@ namespace plugin_natives
 		}
 
 	protected:
-		NATIVE_HOOK_NAME(char const * const name, implementation_t original, native_t replacement) : NativeHookBase(NATIVE_HOOK_NUMBER, name, replacement), original_(original) {}
+		NATIVE_HOOK_NAME(char const * const name, implementation_t original, AMX_NATIVE replacement) : NativeHookBase(NATIVE_HOOK_NUMBER, name, replacement), original_(original) {}
 		~NATIVE_HOOK_NAME() = default;
 
 	private:
@@ -270,6 +270,6 @@ namespace plugin_natives
 	};
 
 	template <typename RET, NATIVE_HOOK_TEMPLATE>
-	class NativeHook<RET(NATIVE_HOOK_TYPES)> : public NATIVE_HOOK_NAME<RET, NATIVE_HOOK_TYPES> { protected: NativeHook(char const * const name, implementation_t original, native_t replacement) : NATIVE_HOOK_NAME(name, original, replacement) {} };
+	class NativeHook<RET(NATIVE_HOOK_TYPES)> : public NATIVE_HOOK_NAME<RET, NATIVE_HOOK_TYPES> { protected: NativeHook(char const * const name, implementation_t original, AMX_NATIVE replacement) : NATIVE_HOOK_NAME(name, original, replacement) {} };
 };
 

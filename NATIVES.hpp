@@ -1,46 +1,27 @@
 #pragma once
 
+#if defined SAMPGDK_CPP_WRAPPERS
+	// We don't actually use the `sampgdk` C++ namespace, because otherwise we
+	// can't undefine the native function names.  If we did, the names would be
+	// in a separate namespace, but it is highly likely that it would have
+	// `using`, so would clash anyway.  That's a shame, because otherwise we
+	// would not need the `#undef` before each `HOOK_DEFN`.
+	#undef SAMPGDK_CPP_WRAPPERS
+#endif
+#include <sampgdk/a_samp.h>
+#include <sampgdk/a_players.h>
+#include <sampgdk/a_vehicles.h>
+#include <sampgdk/a_objects.h>
+#include <sampgdk/a_actor.h>
+#include <sampgdk/a_http.h>
+
+#include "src/NativeHook.hpp"
+#include "src/NativeFunc.hpp"
+
+//using namespace sampgdk;
+using namespace plugin_natives;
+
 #undef  SetPlayerPos
 HOOK_DEFN(SetPlayerPos, bool(int playerid, float x, float y, float z));
 #define BAD_SetPlayerPos *SetPlayerPos
-
-/*namespace samp_natives
-{
-	extern "C" __declspec(dllexport) bool
-		NATIVE_SetPlayerPos(int playerid, float x, float y, float z);
-
-	extern class Native_SetPlayerPos : public NativeHook<bool(int playerid, float x, float y, float z)>
-	{
-	public:
-		Native_SetPlayerPos()
-			:
-			NativeHook<bool(int playerid, float x, float y, float z)>("SetPlayerPos", &sampgdk_SetPlayerPos, &Call)
-		{}
-
-		using NativeHookBase::IsEnabled;
-
-	private:
-		friend bool
-			NATIVE_SetPlayerPos(int playerid, float x, float y, float z);
-
-		static cell
-			Call(AMX * amx, cell * params)
-		{
-			return ::samp_natives::SetPlayerPos.CallDoOuter(amx, params);
-		}
-
-		bool Do(int playerid, float x, float y, float z) const;
-	} SetPlayerPos;
-
-	extern "C" __declspec(dllexport) bool
-		NATIVE_SetPlayerPos(
-			typename ::samp_natives::TypeResolver<void(int playerid)>::type p3,
-			typename ::samp_natives::TypeResolver<void(float x)>::type p2,
-			typename ::samp_natives::TypeResolver<void(float y)>::type p1,
-			typename ::samp_natives::TypeResolver<void(float z)>::type p0)
-	{
-		#pragma comment(linker, "/EXPORT:SetPlayerPos=hi")
-		return ::samp_natives::SetPlayerPos.Do(p3, p2, p1, p0);
-	}
-};*/
 

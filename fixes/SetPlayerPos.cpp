@@ -1,4 +1,7 @@
 #include "../main.hpp"
+#include "../NATIVES.hpp"
+
+using namespace plugin_natives;
 
 #define _FIXES_WEAPON_SLOTS                     (13)
 
