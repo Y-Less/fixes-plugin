@@ -1,4 +1,4 @@
-namespace samp_natives
+namespace plugin_natives
 {
 	template <typename RET, NATIVE_HOOK_TEMPLATE>
 	class NATIVE_HOOK_NAME : protected NativeHookBase

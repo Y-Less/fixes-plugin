@@ -14,7 +14,7 @@
 #include "PreprocFuncGen.hpp"
 #include "ParamCast.hpp"
 
-namespace samp_natives
+namespace plugin_natives
 {
 	class NativeHookBase;
 
@@ -545,32 +545,32 @@ namespace samp_natives
 // normal users getting in to that data.  However, we do want them to be able to
 // use the common `IsEnabled` method, so re-export it.
 #define HOOK_DEFN(func,type) \
-	extern "C" SAMP_NATIVES_RETURN(type) AMX_NATIVE_CALL  \
-		NATIVE_##func SAMP_NATIVES_WITHOUT_RETURN_##type ;                      \
-                                                                                \
-	namespace samp_natives                                                      \
+	extern "C" SAMP_NATIVES_RETURN(type) AMX_NATIVE_CALL                        \
+	    NATIVE_##func SAMP_NATIVES_WITHOUT_RETURN_##type ;                      \
+	                                                                            \
+	namespace plugin_natives                                                    \
 	{                                                                           \
-		extern class Native_##func : public NativeHook<type>                    \
-		{                                                                       \
-		public:                                                                 \
-			Native_##func() :                                                   \
-				NativeHook<type>(#func, &sampgdk_##func, &Call) {}              \
-                                                                                \
-			using NativeHookBase::IsEnabled;                                    \
-                                                                                \
-		private:                                                                \
-			friend SAMP_NATIVES_RETURN(type) AMX_NATIVE_CALL                    \
-				::NATIVE_##func SAMP_NATIVES_WITHOUT_RETURN_##type ;            \
-                                                                                \
-			static cell AMX_NATIVE_CALL                                         \
-				Call(AMX * amx, cell * params)                                  \
-			{                                                                   \
-				return ::samp_natives::func.CallDoOuter(amx, params);           \
-			}                                                                   \
-                                                                                \
-			SAMP_NATIVES_RETURN(type)                                           \
-				Do SAMP_NATIVES_WITHOUT_RETURN_##type const;                    \
-		} func;                                                                 \
+	    extern class Native_##func : public NativeHook<type>                    \
+	    {                                                                       \
+	    public:                                                                 \
+	        Native_##func() :                                                   \
+	            NativeHook<type>(#func, &sampgdk_##func, &Call) {}              \
+	                                                                            \
+	        using NativeHookBase::IsEnabled;                                    \
+	                                                                            \
+	    private:                                                                \
+	        friend SAMP_NATIVES_RETURN(type) AMX_NATIVE_CALL                    \
+	            ::NATIVE_##func SAMP_NATIVES_WITHOUT_RETURN_##type ;            \
+	                                                                            \
+	        static cell AMX_NATIVE_CALL                                         \
+	            Call(AMX * amx, cell * params)                                  \
+	        {                                                                   \
+	            return ::plugin_natives::func.CallDoOuter(amx, params);         \
+	        }                                                                   \
+	                                                                            \
+	        SAMP_NATIVES_RETURN(type)                                           \
+	            Do SAMP_NATIVES_WITHOUT_RETURN_##type const;                    \
+	    } func;                                                                 \
 	}
 
 #if 0
@@ -596,15 +596,15 @@ HOOK_DECL(SetPlayerPos, bool(int playerid, float x, float y, float z))
 
 #define HOOK_DECL(func,type) \
 	extern "C" SAMP_NATIVES_RETURN(type) AMX_NATIVE_CALL                        \
-		NATIVE_##func(SAMP_NATIVES_PARAMETERS(type))                            \
+	    NATIVE_##func(SAMP_NATIVES_PARAMETERS(type))                            \
 	{                                                                           \
-		__pragma(comment(linker, "/EXPORT:"#func"=_NATIVE_"#func));             \
-		SAMP_NATIVES_MAYBE_RETURN(type)                                         \
-			::samp_natives::func.Do(SAMP_NATIVES_CALLING(type));                \
+	    __pragma(comment(linker, "/EXPORT:"#func"=_NATIVE_"#func));             \
+	    SAMP_NATIVES_MAYBE_RETURN(type)                                         \
+	        ::plugin_natives::func.Do(SAMP_NATIVES_CALLING(type));              \
 	}                                                                           \
-                                                                                \
-	samp_natives::Native_##func samp_natives::func;                             \
+	                                                                            \
+	plugin_natives::Native_##func plugin_natives::func;                         \
 	SAMP_NATIVES_RETURN(type)                                                   \
-		samp_natives::Native_##func::                                           \
-		Do SAMP_NATIVES_WITHOUT_RETURN_##type const
+	    plugin_natives::Native_##func::                                         \
+	    Do SAMP_NATIVES_WITHOUT_RETURN_##type const
 

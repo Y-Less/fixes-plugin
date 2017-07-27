@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include <plugin.h>
 
-namespace samp_natives
+namespace plugin_natives
 {
 	typedef cell AMX_NATIVE_CALL (*native_t)(AMX *, cell *);
 

@@ -6,7 +6,7 @@
 #include "PreprocFuncGen.hpp"
 #include "ParamCast.hpp"
 
-namespace samp_natives
+namespace plugin_natives
 {
 	class NativeFuncBase;
 
@@ -389,7 +389,7 @@ namespace samp_natives
 	extern "C" SAMP_NATIVES_RETURN(type) AMX_NATIVE_CALL  \
 		NATIVE_##func SAMP_NATIVES_WITHOUT_RETURN_##type ;                      \
                                                                                 \
-	namespace samp_natives                                                      \
+	namespace plugin_natives                                                      \
 	{                                                                           \
 		extern class Native_##func : public NativeFunc<type>                    \
 		{                                                                       \
@@ -404,7 +404,7 @@ namespace samp_natives
 			static cell AMX_NATIVE_CALL                                         \
 				Call(AMX * amx, cell * params)                                  \
 			{                                                                   \
-				return ::samp_natives::func.CallDoOuter(amx, params);           \
+				return ::plugin_natives::func.CallDoOuter(amx, params);           \
 			}                                                                   \
                                                                                 \
 			SAMP_NATIVES_RETURN(type)                                           \
@@ -435,11 +435,11 @@ NATIVE_DECL(SetPlayerPosAndAngle, bool(int playerid, float x, float y, float z, 
 	{                                                                           \
 		__pragma(comment(linker, "/EXPORT:"#func"=_NATIVE_"#func));             \
 		SAMP_NATIVES_MAYBE_RETURN(type)                                         \
-			::samp_natives::func.Do(SAMP_NATIVES_CALLING(type));                \
+			::plugin_natives::func.Do(SAMP_NATIVES_CALLING(type));                \
 	}                                                                           \
                                                                                 \
-	samp_natives::Native_##func samp_natives::func;                             \
+	plugin_natives::Native_##func plugin_natives::func;                             \
 	SAMP_NATIVES_RETURN(type)                                                   \
-		samp_natives::Native_##func::                                           \
+		plugin_natives::Native_##func::                                           \
 		Do SAMP_NATIVES_WITHOUT_RETURN_##type const
 

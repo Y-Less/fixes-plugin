@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include <plugin.h>
 
-namespace samp_natives
+namespace plugin_natives
 {
 	template <typename T>
 	class TypeResolver
@@ -63,7 +63,7 @@ namespace samp_natives
 
 #define SAMP_NATIVES_DEFER(a,b) a b
 
-#define SAMP_NATIVES_TYPE(tt) typename ::samp_natives::TypeResolver<void(tt)>::type
+#define SAMP_NATIVES_TYPE(tt) typename ::plugin_natives::TypeResolver<void(tt)>::type
 
 #define SAMP_NATIVES_WITHOUT_PARAMS_int(...)   int
 #define SAMP_NATIVES_WITHOUT_PARAMS_float(...) float
