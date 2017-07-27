@@ -6,7 +6,7 @@
 	url = git@github.com:Y-Less/samp-plugin-sdk.git
 [submodule "dependencies/subhook"]
 	path = dependencies/subhook
-	url = git@github.com:Zeex/subhook.git
+	url = git@github.com:Y-Less/subhook.git
 [submodule "dependencies/samp-log-core"]
 	path = dependencies/samp-log-core
 	url = git@github.com:Y-Less/samp-log-core.git
