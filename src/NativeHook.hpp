@@ -5,8 +5,8 @@
 
 #include <subhook/subhook.h>
 
-#include "PreprocFuncGen.hpp"
-#include "ParamCast.hpp"
+#include "NativeFuncGen.hpp"
+#include "NativeCast.hpp"
 
 namespace plugin_natives
 {
