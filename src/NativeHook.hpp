@@ -545,7 +545,7 @@ namespace plugin_natives
 // normal users getting in to that data.  However, we do want them to be able to
 // use the common `IsEnabled` method, so re-export it.
 #define HOOK_DEFN(func,type) \
-	extern "C" SAMP_NATIVES_RETURN(type) AMX_NATIVE_CALL                        \
+	extern "C" SAMP_NATIVES_RETURN(type) _cdecl                                 \
 	    NATIVE_##func SAMP_NATIVES_WITHOUT_RETURN_##type ;                      \
 	                                                                            \
 	namespace plugin_natives                                                    \
@@ -559,7 +559,7 @@ namespace plugin_natives
 	        using NativeHookBase::IsEnabled;                                    \
 	                                                                            \
 	    private:                                                                \
-	        friend SAMP_NATIVES_RETURN(type) AMX_NATIVE_CALL                    \
+	        friend SAMP_NATIVES_RETURN(type) _cdecl                             \
 	            ::NATIVE_##func SAMP_NATIVES_WITHOUT_RETURN_##type ;            \
 	                                                                            \
 	        static cell AMX_NATIVE_CALL                                         \
@@ -595,10 +595,10 @@ HOOK_DECL(SetPlayerPos, bool(int playerid, float x, float y, float z))
 #endif
 
 #define HOOK_DECL(func,type) \
-	extern "C" SAMP_NATIVES_RETURN(type) AMX_NATIVE_CALL                        \
+	extern "C" SAMP_NATIVES_RETURN(type) _cdecl                                 \
 	    NATIVE_##func(SAMP_NATIVES_PARAMETERS(type))                            \
 	{                                                                           \
-	    __pragma(comment(linker, "/EXPORT:"#func"=_NATIVE_"#func));             \
+	    __pragma(comment(linker, "/EXPORT:_"#func"=_NATIVE_"#func));            \
 	    SAMP_NATIVES_MAYBE_RETURN(type)                                         \
 	        ::plugin_natives::func.Do(SAMP_NATIVES_CALLING(type));              \
 	}                                                                           \

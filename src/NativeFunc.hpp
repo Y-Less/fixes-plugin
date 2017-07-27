@@ -386,30 +386,30 @@ namespace plugin_natives
 // normal users getting in to that data.  However, we do want them to be able to
 // use the common `IsEnabled` method, so re-export it.
 #define NATIVE_DEFN(func,type) \
-	extern "C" SAMP_NATIVES_RETURN(type) AMX_NATIVE_CALL  \
+	extern "C" SAMP_NATIVES_RETURN(type) _cdecl  \
 		NATIVE_##func SAMP_NATIVES_WITHOUT_RETURN_##type ;                      \
                                                                                 \
-	namespace plugin_natives                                                      \
+	namespace plugin_natives                                                    \
 	{                                                                           \
-		extern class Native_##func : public NativeFunc<type>                    \
-		{                                                                       \
-		public:                                                                 \
-			Native_##func() :                                                   \
-				NativeFunc<type>(#func, &Call) {}                               \
+	    extern class Native_##func : public NativeFunc<type>                    \
+	    {                                                                       \
+	    public:                                                                 \
+	        Native_##func() :                                                   \
+	            NativeFunc<type>(#func, &Call) {}                               \
                                                                                 \
-		private:                                                                \
-			friend SAMP_NATIVES_RETURN(type) AMX_NATIVE_CALL                    \
-				::NATIVE_##func SAMP_NATIVES_WITHOUT_RETURN_##type ;            \
+	    private:                                                                \
+	        friend SAMP_NATIVES_RETURN(type) _cdecl                             \
+	            ::NATIVE_##func SAMP_NATIVES_WITHOUT_RETURN_##type ;            \
                                                                                 \
-			static cell AMX_NATIVE_CALL                                         \
-				Call(AMX * amx, cell * params)                                  \
-			{                                                                   \
-				return ::plugin_natives::func.CallDoOuter(amx, params);           \
-			}                                                                   \
+	        static cell AMX_NATIVE_CALL                                         \
+	            Call(AMX * amx, cell * params)                                  \
+	        {                                                                   \
+	            return ::plugin_natives::func.CallDoOuter(amx, params);         \
+	        }                                                                   \
                                                                                 \
-			SAMP_NATIVES_RETURN(type)                                           \
-				Do SAMP_NATIVES_WITHOUT_RETURN_##type const;                    \
-		} func;                                                                 \
+	        SAMP_NATIVES_RETURN(type)                                           \
+	            Do SAMP_NATIVES_WITHOUT_RETURN_##type const;                    \
+	    } func;                                                                 \
 	}
 
 #if 0
@@ -430,16 +430,16 @@ NATIVE_DECL(SetPlayerPosAndAngle, bool(int playerid, float x, float y, float z, 
 #endif
 
 #define NATIVE_DECL(func,type) \
-	extern "C" SAMP_NATIVES_RETURN(type) AMX_NATIVE_CALL                        \
-		NATIVE_##func(SAMP_NATIVES_PARAMETERS(type))                            \
+	extern "C" SAMP_NATIVES_RETURN(type) _cdecl                                 \
+	    NATIVE_##func(SAMP_NATIVES_PARAMETERS(type))                            \
 	{                                                                           \
-		__pragma(comment(linker, "/EXPORT:"#func"=_NATIVE_"#func));             \
-		SAMP_NATIVES_MAYBE_RETURN(type)                                         \
-			::plugin_natives::func.Do(SAMP_NATIVES_CALLING(type));                \
+	    __pragma(comment(linker, "/EXPORT:_"#func"=_NATIVE_"#func));            \
+	    SAMP_NATIVES_MAYBE_RETURN(type)                                         \
+	        ::plugin_natives::func.Do(SAMP_NATIVES_CALLING(type));              \
 	}                                                                           \
                                                                                 \
-	plugin_natives::Native_##func plugin_natives::func;                             \
+	plugin_natives::Native_##func plugin_natives::func;                         \
 	SAMP_NATIVES_RETURN(type)                                                   \
-		plugin_natives::Native_##func::                                           \
-		Do SAMP_NATIVES_WITHOUT_RETURN_##type const
+	    plugin_natives::Native_##func::                                         \
+	    Do SAMP_NATIVES_WITHOUT_RETURN_##type const
 

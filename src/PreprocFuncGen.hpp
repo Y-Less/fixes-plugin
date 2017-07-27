@@ -165,23 +165,24 @@ namespace plugin_natives
 #define SAMP_NATIVES_RETURN(params) SAMP_NATIVES_WITHOUT_PARAMS_##params
 #define SAMP_NATIVES_MAYBE_RETURN(params) SAMP_NATIVES_MAYBE_RETURN_##params
 
-//#ifdef SAMP_NATIVES_EMBEDDED
-//  #define SAMP_NATIVES_EXPORT SAMP_NATIVES_EXTERN_C
-//#else
-//  #if SAMP_NATIVES_LINUX
-//    #if defined IN_SAMP_NATIVES
-//      #define SAMP_NATIVES_EXPORT SAMP_NATIVES_EXTERN_C __attribute__((visibility("default")))
-//    #else
-//      #define SAMP_NATIVES_EXPORT SAMP_NATIVES_EXTERN_C
-//    #endif
-//  #elif SAMP_NATIVES_WINDOWS
-//    #if defined IN_SAMP_NATIVES
-//      #define SAMP_NATIVES_EXPORT SAMP_NATIVES_EXTERN_C __declspec(dllexport)
-//    #else
-//      #define SAMP_NATIVES_EXPORT SAMP_NATIVES_EXTERN_C __declspec(dllimport)
-//    #endif
-//  #else
-//    #error Unsupported operating system
-//  #endif
-//#endif
+// I don't know what the GCC/Clang equivalent to this is:
+//   
+//   __pragma(comment(linker, "/EXPORT:_"#func"=_NATIVE_"#func));
+//   
+// That code takes a function called `_NATIVE_SetPlayerPos` (say) and exports it
+// from the .dll as `_SetPlayerPos` (which is the `_cdecl` name mangling version
+// of `SetPlayerPos`).  This means that we can internally have `SetPlayerPos` as
+// an instance of a class with an `operator()` for calling, while providing an
+// external API that looks quite similar in the form of a function with the same
+// name that wraps the object.
+// 
+// I think that it might be possible by setting all the other versions as hidden
+// with `__attribute__((visibility("hidden")))` and the wrapper function with
+// exactly the same name as exported with `__attribute__((visibility("default")))`
+// AND weak (so as to not have the names conflict) with `__attribute__((weak))`.
+// This (I think) will make all internal code use the object, since that is the
+// strong name, but will export the identical weak name for others to call.
+#define PLUGIN_NATIVE(func,type) \
+	extern "C" _declspec(dllimport) SAMP_NATIVES_RETURN(type) _cdecl            \
+	    func(SAMP_NATIVES_PARAMETERS(type))
 
