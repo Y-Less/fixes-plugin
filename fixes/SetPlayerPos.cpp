@@ -8,6 +8,7 @@ using namespace plugin_natives;
 // In your code:
 HOOK_DECL(SetPlayerPos, bool(int playerid, float x, float y, float z))
 {
+	Log(LogLevel::DEBUG, "FIXES_SetPlayerPos called");
 	int
 		ret = SetPlayerPos(playerid, x, y, z),
 		index = GetPlayerAnimationIndex(playerid);
