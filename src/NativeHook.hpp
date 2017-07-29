@@ -4,9 +4,12 @@
 #include <list>
 
 #include <subhook/subhook.h>
+#include <sampgdk/interop.h>
 
 #include "NativeFuncGen.hpp"
 #include "NativeCast.hpp"
+
+#define PLUGIN_NATIVES_HAS_HOOK
 
 namespace plugin_natives
 {
@@ -37,8 +40,6 @@ namespace plugin_natives
 		}
 
 	protected:
-		typedef cell (*AMX_NATIVE)(AMX *, cell *);
-
 		bool Recursing()
 		{
 			// Get if we are already in the native, and then flip it.
@@ -117,7 +118,7 @@ namespace plugin_natives
 	private:
 		virtual cell CallDoInner(AMX *, cell *) = 0;
 
-		friend void Load(void **ppData);
+		friend int AmxLoad(AMX * amx);
 
 		NativeHookBase() = delete;
 		NativeHookBase(NativeHookBase const &) = delete;

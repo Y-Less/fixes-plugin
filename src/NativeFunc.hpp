@@ -6,6 +6,8 @@
 #include "NativeFuncGen.hpp"
 #include "NativeCast.hpp"
 
+#define PLUGIN_NATIVES_HAS_FUNC
+
 namespace plugin_natives
 {
 	int AmxLoad(AMX * amx);
@@ -162,32 +164,6 @@ namespace plugin_natives
 	template <typename RET>
 	class NativeFunc<RET()> : public NativeFunc0<RET> { protected: NativeFunc(char const * const name, AMX_NATIVE native) : NativeFunc0(name, native) {} };
 };
-
-#if defined PLUGIN_NATIVES_STORAGE
-namespace plugin_natives
-{
-	std::list<NativeFuncBase *> *
-		NativeFuncBase::all_;
-
-	int AmxLoad(AMX * amx)
-	{
-		int
-			ret = 0;
-		if (NativeFuncBase::all_)
-		{
-			AMX_NATIVE_INFO
-				curNative;
-			for (NativeFuncBase * curFunc : *NativeFuncBase::all_)
-			{
-				curNative.name = curFunc->name_;
-				curNative.func = curFunc->native_;
-				ret = amx_Register(amx, &curNative, 1);
-			}
-		}
-		return ret;
-	}
-};
-#endif
 
 // Defer declaring the other classes to a super macro file.
 #define NATIVE_HOOK_TEMPLATE   typename A
@@ -435,7 +411,7 @@ namespace plugin_natives
 	        Native_##func() :                                                   \
 	            NativeFunc<type>(#func, &Call) {}                               \
                                                                                 \
-	    private:                                                                \
+	    public:                                                                \
 	        friend SAMP_NATIVES_RETURN(type) _cdecl                             \
 	            ::NATIVE_##func SAMP_NATIVES_WITHOUT_RETURN_##type ;            \
                                                                                 \

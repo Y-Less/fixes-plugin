@@ -102,14 +102,17 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)dependencies\samp-plugin-sdk;$(SolutionDir)dependencies;$(SolutionDir)dependencies\samp-log-core\include;$(SolutionDir)dependencies\sampgdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>HAVE_STDINT_H;SUBHOOK_IMPLEMENTATION;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>HAVE_STDINT_H;SUBHOOK_IMPLEMENTATION;_CRT_SECURE_NO_WARNINGS;_CRT_OBSOLETE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>$(SolutionDir)dependencies\sampgdk\lib\sampgdk4.lib;$(SolutionDir)dependencies\samp-log-core\lib\log-core.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>$(SolutionDir)plugin.def</ModuleDefinitionFile>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(TargetPath)" "$(SolutionDir)..\plugins"</Command>
+      <Command>copy "$(TargetDir)$(TargetName)$(TargetExt)" "$(SolutionDir)..\plugins"
+copy "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)..\plugins"
+
+</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Preprocess|Win32'">
@@ -126,7 +129,10 @@
       <ModuleDefinitionFile>$(SolutionDir)plugin.def</ModuleDefinitionFile>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(TargetPath)" "$(SolutionDir)..\plugins"</Command>
+      <Command>copy "$(TargetDir)$(TargetName)$(TargetExt)" "$(SolutionDir)..\plugins"
+copy "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)..\plugins"
+
+</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -160,7 +166,10 @@
       <ModuleDefinitionFile>$(SolutionDir)plugin.def</ModuleDefinitionFile>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(TargetPath)" "$(SolutionDir)..\plugins"</Command>
+      <Command>copy "$(TargetDir)$(TargetName)$(TargetExt)" "$(SolutionDir)..\plugins"
+copy "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)..\plugins"
+
+</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -185,6 +194,31 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="plugin.def" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="dependencies\samp-log-core\include\samplog\DebugInfo.h" />
+    <ClInclude Include="dependencies\samp-log-core\include\samplog\Logger.h" />
+    <ClInclude Include="dependencies\samp-log-core\include\samplog\LogLevel.h" />
+    <ClInclude Include="dependencies\samp-log-core\include\samplog\PluginLogger.h" />
+    <ClInclude Include="dependencies\samp-plugin-sdk\amx\amx.h" />
+    <ClInclude Include="dependencies\samp-plugin-sdk\amx\amx2.h" />
+    <ClInclude Include="dependencies\samp-plugin-sdk\plugin.h" />
+    <ClInclude Include="dependencies\samp-plugin-sdk\plugincommon.h" />
+    <ClInclude Include="dependencies\sampgdk\include\sampgdk\a_actor.h" />
+    <ClInclude Include="dependencies\sampgdk\include\sampgdk\a_http.h" />
+    <ClInclude Include="dependencies\sampgdk\include\sampgdk\a_objects.h" />
+    <ClInclude Include="dependencies\sampgdk\include\sampgdk\a_players.h" />
+    <ClInclude Include="dependencies\sampgdk\include\sampgdk\a_samp.h" />
+    <ClInclude Include="dependencies\sampgdk\include\sampgdk\a_vehicles.h" />
+    <ClInclude Include="dependencies\sampgdk\include\sampgdk\bool.h" />
+    <ClInclude Include="dependencies\sampgdk\include\sampgdk\core.h" />
+    <ClInclude Include="dependencies\sampgdk\include\sampgdk\export.h" />
+    <ClInclude Include="dependencies\sampgdk\include\sampgdk\interop.h" />
+    <ClInclude Include="dependencies\sampgdk\include\sampgdk\platform.h" />
+    <ClInclude Include="dependencies\sampgdk\include\sampgdk\sdk.h" />
+    <ClInclude Include="dependencies\sampgdk\include\sampgdk\types.h" />
+    <ClInclude Include="dependencies\sampgdk\include\sampgdk\version.h" />
+    <ClInclude Include="dependencies\subhook\subhook.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

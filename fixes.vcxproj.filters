@@ -42,4 +42,75 @@
   <ItemGroup>
     <None Include="plugin.def" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="dependencies\subhook\subhook.h">
+      <Filter>dependencies\subhook</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\samp-plugin-sdk\plugin.h">
+      <Filter>dependencies\samp-plugin-sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\samp-plugin-sdk\plugincommon.h">
+      <Filter>dependencies\samp-plugin-sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\samp-plugin-sdk\amx\amx.h">
+      <Filter>dependencies\samp-plugin-sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\samp-plugin-sdk\amx\amx2.h">
+      <Filter>dependencies\samp-plugin-sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\samp-log-core\include\samplog\DebugInfo.h">
+      <Filter>dependencies\samp-log-core</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\samp-log-core\include\samplog\Logger.h">
+      <Filter>dependencies\samp-log-core</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\samp-log-core\include\samplog\LogLevel.h">
+      <Filter>dependencies\samp-log-core</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\samp-log-core\include\samplog\PluginLogger.h">
+      <Filter>dependencies\samp-log-core</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\sampgdk\include\sampgdk\a_actor.h">
+      <Filter>dependencies\sampgdk</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\sampgdk\include\sampgdk\a_http.h">
+      <Filter>dependencies\sampgdk</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\sampgdk\include\sampgdk\a_objects.h">
+      <Filter>dependencies\sampgdk</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\sampgdk\include\sampgdk\a_players.h">
+      <Filter>dependencies\sampgdk</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\sampgdk\include\sampgdk\a_samp.h">
+      <Filter>dependencies\sampgdk</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\sampgdk\include\sampgdk\a_vehicles.h">
+      <Filter>dependencies\sampgdk</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\sampgdk\include\sampgdk\bool.h">
+      <Filter>dependencies\sampgdk</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\sampgdk\include\sampgdk\core.h">
+      <Filter>dependencies\sampgdk</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\sampgdk\include\sampgdk\export.h">
+      <Filter>dependencies\sampgdk</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\sampgdk\include\sampgdk\interop.h">
+      <Filter>dependencies\sampgdk</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\sampgdk\include\sampgdk\platform.h">
+      <Filter>dependencies\sampgdk</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\sampgdk\include\sampgdk\sdk.h">
+      <Filter>dependencies\sampgdk</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\sampgdk\include\sampgdk\types.h">
+      <Filter>dependencies\sampgdk</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\sampgdk\include\sampgdk\version.h">
+      <Filter>dependencies\sampgdk</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>
