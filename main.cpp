@@ -19,18 +19,6 @@ samplog::CPluginLogger
 extern void *
 	pAMXFunctions;
 
-// In your header:
-NATIVE_DEFN(SetPlayerPosAndAngle, bool(int playerid, float x, float y, float z, float a));
-
-// In your code:
-NATIVE_DECL(SetPlayerPosAndAngle, bool(int playerid, float x, float y, float z, float a))
-{
-	// Implementation here...
-	//(*SetPlayerPos)(playerid, x, y, z);
-	SetPlayerPos(playerid, x, y, z);
-	return SetPlayerFacingAngle(playerid, a);
-}
-
 PLUGIN_EXPORT unsigned int PLUGIN_CALL Supports() {
 	return sampgdk::Supports() | SUPPORTS_AMX_NATIVES | SUPPORTS_PROCESS_TICK;
 }
