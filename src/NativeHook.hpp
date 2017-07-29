@@ -602,7 +602,7 @@ namespace plugin_natives
 // The inheritance from `NativeHookBase` is protected, because we don't want
 // normal users getting in to that data.  However, we do want them to be able to
 // use the common `IsEnabled` method, so re-export it.
-#define HOOK_DEFN(func,type) \
+#define HOOK_DECL(func,type) \
 	extern "C" SAMP_NATIVES_RETURN(type) _cdecl                                 \
 	    NATIVE_##func SAMP_NATIVES_WITHOUT_RETURN_##type ;                      \
 	                                                                            \
@@ -637,10 +637,10 @@ namespace plugin_natives
 
 // In you header:
 #undef SetPlayerPos
-HOOK_DEFN(SetPlayerPos, bool(int playerid, float x, float y, float z));
+HOOK_DECL(SetPlayerPos, bool(int playerid, float x, float y, float z));
 
 // In your code:
-HOOK_DECL(SetPlayerPos, bool(int playerid, float x, float y, float z))
+HOOK_DEFN(SetPlayerPos, bool(int playerid, float x, float y, float z))
 {
 	// Implementation here...
 	gLastX[playerid] = x;
@@ -668,7 +668,7 @@ HOOK_DECL(SetPlayerPos, bool(int playerid, float x, float y, float z))
 //   {};
 //   
 // Which means nothing.
-#define HOOK_DECL(func,type) \
+#define HOOK_DEFN(func,type) \
 	extern "C" SAMP_NATIVES_RETURN(type) _cdecl                                 \
 	    NATIVE_##func(SAMP_NATIVES_PARAMETERS(type))                            \
 	{                                                                           \
@@ -698,4 +698,7 @@ HOOK_DECL(SetPlayerPos, bool(int playerid, float x, float y, float z))
 	SAMP_NATIVES_RETURN(type)                                                   \
 	    plugin_natives::Native_##func::                                         \
 	    Do SAMP_NATIVES_WITHOUT_RETURN_##type const
+
+#define HOOK_DECLARE HOOK_DECL
+#define HOOK_DEFINE  HOOK_DEFN
 

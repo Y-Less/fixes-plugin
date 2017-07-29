@@ -5,7 +5,7 @@
 	// can't undefine the native function names.  If we did, the names would be
 	// in a separate namespace, but it is highly likely that it would have
 	// `using`, so would clash anyway.  That's a shame, because otherwise we
-	// would not need the `#undef` before each `HOOK_DEFN`.
+	// would not need the `#undef` before each `HOOK_DECL`.
 	#undef SAMPGDK_CPP_WRAPPERS
 #endif
 #include <sampgdk/a_samp.h>
@@ -22,5 +22,5 @@
 using namespace plugin_natives;
 
 #undef SetPlayerPos
-HOOK_DEFN(SetPlayerPos, bool(int playerid, float x, float y, float z));
+HOOK_DECL(SetPlayerPos, bool(int playerid, float x, float y, float z));
 

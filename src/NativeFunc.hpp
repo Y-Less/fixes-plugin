@@ -399,7 +399,7 @@ namespace plugin_natives
 // The inheritance from `NativeFuncBase` is protected, because we don't want
 // normal users getting in to that data.  However, we do want them to be able to
 // use the common `IsEnabled` method, so re-export it.
-#define NATIVE_DEFN(func,type) \
+#define NATIVE_DECL(func,type) \
 	extern "C" SAMP_NATIVES_RETURN(type) _cdecl  \
 		NATIVE_##func SAMP_NATIVES_WITHOUT_RETURN_##type ;                      \
                                                                                 \
@@ -431,10 +431,10 @@ namespace plugin_natives
 // Example:
 
 // In your header:
-NATIVE_DEFN(SetPlayerPosAndAngle, bool(int playerid, float x, float y, float z, float a));
+NATIVE_DECL(SetPlayerPosAndAngle, bool(int playerid, float x, float y, float z, float a));
 
 // In your code:
-NATIVE_DECL(SetPlayerPosAndAngle, bool(int playerid, float x, float y, float z, float a))
+NATIVE_DEFN(SetPlayerPosAndAngle, bool(int playerid, float x, float y, float z, float a))
 {
 	// Implementation here...
 	SetPlayerPos(playerid, x, y, z);
@@ -459,7 +459,7 @@ NATIVE_DECL(SetPlayerPosAndAngle, bool(int playerid, float x, float y, float z, 
 //   {};
 //   
 // Which means nothing.
-#define NATIVE_DECL(func,type) \
+#define NATIVE_DEFN(func,type) \
 	extern "C" SAMP_NATIVES_RETURN(type) _cdecl                                 \
 	    NATIVE_##func(SAMP_NATIVES_PARAMETERS(type))                            \
 	{                                                                           \
@@ -487,4 +487,7 @@ NATIVE_DECL(SetPlayerPosAndAngle, bool(int playerid, float x, float y, float z, 
 	SAMP_NATIVES_RETURN(type)                                                   \
 	    plugin_natives::Native_##func::                                         \
 	    Do SAMP_NATIVES_WITHOUT_RETURN_##type const
+
+#define NATIVE_DECLARE NATIVE_DECL
+#define NATIVE_DEFINE  NATIVE_DEFN
 
