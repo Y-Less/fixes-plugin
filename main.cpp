@@ -10,16 +10,17 @@
 	DeclaredFix<FIXES_CHECK_DEFINED_(name)> const FIX_##name##_(fix_description_s {} comments )
 
 #include "main.hpp"
-
 #include "NATIVES.hpp"
+#include "src/NativesMain.hpp"
+
+samplog::CPluginLogger
+	Log("fixes-plugin");
+
+extern void *
+	pAMXFunctions;
 
 // In your header:
 NATIVE_DEFN(SetPlayerPosAndAngle, bool(int playerid, float x, float y, float z, float a));
-#include "src/NativesMain.hpp"
-
-//samplog::CDefaultLevelLogger<LogLevel::INFO>
-samplog::CPluginLogger
-	Log("fixes-plugin");
 
 // In your code:
 NATIVE_DECL(SetPlayerPosAndAngle, bool(int playerid, float x, float y, float z, float a))
@@ -35,13 +36,10 @@ PLUGIN_EXPORT unsigned int PLUGIN_CALL Supports() {
 }
 
 PLUGIN_EXPORT bool PLUGIN_CALL Load(void **ppData) {
+	pAMXFunctions = ppData[PLUGIN_DATA_AMX_EXPORTS];
 	samplog::Init();
 	Log.SetLogLevel(LogLevel::DEBUG | LogLevel::ERROR | LogLevel::INFO | LogLevel::WARNING);
-	//plugin_natives::Load(ppData);
-	bool
-		ret = sampgdk::Load(ppData);
-	logprintf("Load called");
-	return ret;
+	return sampgdk::Load(ppData);
 }
 
 PLUGIN_EXPORT void PLUGIN_CALL Unload() {
@@ -49,7 +47,6 @@ PLUGIN_EXPORT void PLUGIN_CALL Unload() {
 }
 
 PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX *amx) {
-	logprintf("Load called");
 	return plugin_natives::AmxLoad(amx);
 }
 

@@ -411,7 +411,7 @@ namespace plugin_natives
 	        Native_##func() :                                                   \
 	            NativeFunc<type>(#func, &Call) {}                               \
                                                                                 \
-	    public:                                                                \
+	    private:                                                                \
 	        friend SAMP_NATIVES_RETURN(type) _cdecl                             \
 	            ::NATIVE_##func SAMP_NATIVES_WITHOUT_RETURN_##type ;            \
                                                                                 \
