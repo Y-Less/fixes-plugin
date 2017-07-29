@@ -101,7 +101,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\samp-plugin-sdk;$(SolutionDir)dependencies;$(SolutionDir)dependencies\samp-log-core\include;$(SolutionDir)dependencies\sampgdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\samp-plugin-sdk;$(SolutionDir)dependencies;$(SolutionDir)dependencies\samp-log-core\include;D:\work\SA-MP\fixes-plugin\dependencies;$(SolutionDir)dependencies\sampgdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>HAVE_STDINT_H;SUBHOOK_IMPLEMENTATION;_CRT_SECURE_NO_WARNINGS;_CRT_OBSOLETE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -120,7 +120,7 @@ copy "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)..\plugins"
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\samp-plugin-sdk;$(SolutionDir)dependencies;$(SolutionDir)dependencies\samp-log-core\include;$(SolutionDir)dependencies\sampgdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\samp-plugin-sdk;$(SolutionDir)dependencies;$(SolutionDir)dependencies\samp-log-core\include;D:\work\SA-MP\fixes-plugin\dependencies;$(SolutionDir)dependencies\sampgdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>HAVE_STDINT_H;SUBHOOK_IMPLEMENTATION;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessToFile>true</PreprocessToFile>
     </ClCompile>
@@ -156,7 +156,7 @@ copy "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)..\plugins"
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\samp-plugin-sdk;$(SolutionDir)dependencies;$(SolutionDir)dependencies\samp-log-core\include;$(SolutionDir)dependencies\sampgdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\samp-plugin-sdk;$(SolutionDir)dependencies;$(SolutionDir)dependencies\samp-log-core\include;D:\work\SA-MP\fixes-plugin\dependencies;$(SolutionDir)dependencies\sampgdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>HAVE_STDINT_H;SUBHOOK_IMPLEMENTATION;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -196,6 +196,10 @@ copy "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)..\plugins"
     <None Include="plugin.def" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="dependencies\plugin-natives\NativeFunc.hpp" />
+    <ClInclude Include="dependencies\plugin-natives\NativeHook.hpp" />
+    <ClInclude Include="dependencies\plugin-natives\NativeImport.hpp" />
+    <ClInclude Include="dependencies\plugin-natives\NativesMain.hpp" />
     <ClInclude Include="dependencies\samp-log-core\include\samplog\DebugInfo.h" />
     <ClInclude Include="dependencies\samp-log-core\include\samplog\Logger.h" />
     <ClInclude Include="dependencies\samp-log-core\include\samplog\LogLevel.h" />

@@ -23,6 +23,9 @@
     <Filter Include="fixes">
       <UniqueIdentifier>{ca6cb99a-a17a-4cfa-a54e-15862d5bdcc5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="dependencies\plugin-natives">
+      <UniqueIdentifier>{abd64611-125a-448c-a558-f9c4380b1175}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dependencies\subhook\subhook.c">
@@ -111,6 +114,18 @@
     </ClInclude>
     <ClInclude Include="dependencies\sampgdk\include\sampgdk\version.h">
       <Filter>dependencies\sampgdk</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\plugin-natives\NativeFunc.hpp">
+      <Filter>dependencies\plugin-natives</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\plugin-natives\NativeHook.hpp">
+      <Filter>dependencies\plugin-natives</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\plugin-natives\NativeImport.hpp">
+      <Filter>dependencies\plugin-natives</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\plugin-natives\NativesMain.hpp">
+      <Filter>dependencies\plugin-natives</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

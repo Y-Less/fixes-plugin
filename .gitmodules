@@ -10,3 +10,6 @@
 [submodule "dependencies/samp-log-core"]
 	path = dependencies/samp-log-core
 	url = git@github.com:Y-Less/samp-log-core.git
+[submodule "dependencies/plugin-natives"]
+	path = dependencies/plugin-natives
+	url = git@github.com:Y-Less/plugin-natives.git

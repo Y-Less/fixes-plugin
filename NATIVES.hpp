@@ -15,12 +15,20 @@
 #include <sampgdk/a_actor.h>
 #include <sampgdk/a_http.h>
 
-#include "src/NativeHook.hpp"
-#include "src/NativeFunc.hpp"
+#define LOG_NATIVE_ERROR(...)   Log(LogLevel::ERROR, __VA_ARGS__)
+#define LOG_NATIVE_WARNING(...) Log(LogLevel::WARNING, __VA_ARGS__)
+#define LOG_NATIVE_DEBUG(...)   Log(LogLevel::DEBUG, __VA_ARGS__)
+#define LOG_NATIVE_INFO(...)    Log(LogLevel::INFO, __VA_ARGS__)
 
-//using namespace sampgdk;
-using namespace plugin_natives;
+#include <plugin-natives/NativeHook.hpp>
+#include <plugin-natives/NativeFunc.hpp>
+
+namespace fixes
+{
+};
+
+using namespace fixes;
 
 #undef SetPlayerPos
-HOOK_DECL(SetPlayerPos, bool(int playerid, float x, float y, float z));
+HOOK_DECL(fixes, SetPlayerPos, bool(int playerid, float x, float y, float z));
 

@@ -11,7 +11,7 @@
 
 #include "main.hpp"
 #include "NATIVES.hpp"
-#include "src/NativesMain.hpp"
+#include <plugin-natives/NativesMain.hpp>
 
 samplog::CPluginLogger
 	Log("fixes-plugin");
@@ -34,7 +34,8 @@ PLUGIN_EXPORT void PLUGIN_CALL Unload() {
 	samplog::Exit();
 }
 
-PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX *amx) {
+PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX *amx)
+{
 	return plugin_natives::AmxLoad(amx);
 }
 

@@ -6,7 +6,7 @@ using namespace plugin_natives;
 #define _FIXES_WEAPON_SLOTS                     (13)
 
 // In your code:
-HOOK_DEFN(SetPlayerPos, bool(int playerid, float x, float y, float z))
+HOOK_DEFN(fixes, SetPlayerPos, bool(int playerid, float x, float y, float z))
 {
 	Log(LogLevel::DEBUG, "FIXES_SetPlayerPos called");
 	int
