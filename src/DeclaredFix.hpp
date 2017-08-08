@@ -1,49 +1,53 @@
 #pragma once
 
-struct fix_description_s
-{
-public:
-	// Can't have these as `std::string` and use `constexpr` in the same class.
-	char const * const Problem;
-	char const * const Solution;
-	char const * const See;
-	char const * const Author;
-	char const * const Topic;
-	char const * const FixedIn;
-
-	constexpr fix_description_s() : fix_description_s(0, 0, 0, 0, 0, 0) {}
-	constexpr fix_description_s(
-		char const * const problem,
-		char const * const solution,
-		char const * const see,
-		char const * const author,
-		char const * const topic,
-		char const * const fixedIn)
-	:
-		Problem(problem), Solution(solution), See(see), Author(author), Topic(topic), FixedIn(fixedIn) {}
-	constexpr fix_description_s problem(char const * const problem) { return { problem, Solution, See, Author, Topic, FixedIn }; }
-	constexpr fix_description_s solution(char const * const solution) { return { Problem, solution, See, Author, Topic, FixedIn }; }
-	constexpr fix_description_s see(char const * const see) { return { Problem, Solution, see, Author, Topic, FixedIn }; }
-	constexpr fix_description_s author(char const * const author) { return { Problem, Solution, See, author, Topic, FixedIn }; }
-	constexpr fix_description_s topic(char const * const topic) { return { Problem, Solution, See, Author, topic, FixedIn }; }
-	constexpr fix_description_s fixed_in(char const * const fixedIn) { return { Problem, Solution, See, Author, Topic, fixedIn }; }
-};
-
 template <int T>
 class DeclaredFix
 {
 public:
-	explicit DeclaredFix(struct fix_description_s const && description) : description_m(description) {}
-
-	inline operator bool() const
+	DeclaredFix() : disabled_(false) {}
+	
+	inline bool operator !() const
 	{
-		return (T != 0);
+		// We use `operator !` instead of `operator ==` or `operator bool`
+		// (cast) so that we can invert the check and use `if ... else ...` in
+		// the macro to avoid a common macro pitfall.  It should compile to the
+		// same thing in the end.
+		switch (T)
+		{
+		case 0:
+			return true;
+		case 1:
+			return false;
+		default:
+			return disabled_;
+		}
 	}
-
+	
+	void Enable()
+	{
+		disabled_ = false;
+	}
+	
+	void Disable()
+	{
+		disabled_ = true;
+	}
+	
 private:
-	struct fix_description_s const
-		description_m;
+	bool
+		disabled_;
 };
+
+#if defined FORWARD_FIXES
+	#define DEFINE_FIX(name,comments) \
+		class DeclaredFix_##name : public DeclaredFix<FIXES_CHECK_DEFINED_(FIX_##name)>
+#else
+	#define DEFINE_FIX(name,comments) \
+		class DeclaredFix_##name : public DeclaredFix<FIXES_CHECK_DEFINED_(FIX_##name)>
+#endif
+
+// I'm hoping this will frequently optimise to nothing.
+//#define FIX(a) if (!FIXES_##name##_)(void)0;else (void)FIXES_##name##_
 
 // This code can detect pre-processor defined symbols that may not exist, may
 // not have a value given, or may be 0 or 1.
@@ -57,16 +61,16 @@ private:
 #define FIXES_CHECK_DEFINED_3_(a) FIXES_CHECK_DEFINED_4_ a
 #define FIXES_CHECK_DEFINED_4_(ignore,result,...) result
 
-#define FIXES_REMOVE_BRACKETS_(...) __VA_ARGS__
-
-#define FIX(name) ((bool)FIX_##name##_)
-
-#ifndef DEFINE_FIX
-	// If this symbol already exists, it is probably doing something special.
-	// Otherwise, just use this to define the fix as `extern` by default, so
-	// that all files can check if the various fixes exist.
-	#define DEFINE_FIX(name,comments) extern DeclaredFix<FIXES_CHECK_DEFINED_(name)> const FIX_##name##_;
-#endif
+//#define FIXES_REMOVE_BRACKETS_(...) __VA_ARGS__
+//
+#define FIX(name) FIX_##name##_
+//
+//#ifndef DEFINE_FIX
+//	// If this symbol already exists, it is probably doing something special.
+//	// Otherwise, just use this to define the fix as `extern` by default, so
+//	// that all files can check if the various fixes exist.
+//	#define DEFINE_FIX(name,comments) extern DeclaredFix<FIXES_CHECK_DEFINED_(name)> const FIX_##name##_;
+//#endif
 
 #include "../README.hpp"
 
