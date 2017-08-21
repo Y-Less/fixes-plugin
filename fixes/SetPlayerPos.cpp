@@ -1,12 +1,11 @@
 #include "../main.hpp"
-#include "../NATIVES.hpp"
+#include "Defines.hpp"
 
-using namespace plugin_natives;
+DECL_FIX(SetPlayerPos);
 
-#define _FIXES_WEAPON_SLOTS                     (13)
-
-// In your code:
-HOOK_DEFN(fixes, SetPlayerPos, bool(int playerid, float x, float y, float z))
+bool
+	FIXES(SetPlayerPos)::
+	operator()(int playerid, float x, float y, float z)
 {
 	Log(LogLevel::DEBUG, "FIXES_SetPlayerPos called");
 	int
